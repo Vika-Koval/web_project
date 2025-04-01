@@ -1,5 +1,16 @@
+// App.js - Main component
+import React from 'react';
+import Navbar from './components/Navbar';
+import HomePage from './components/HomePage';
+import './App.css';
+
 function App() {
-  return <h1>f,;kfd,fd,f,</h1>;
+  return (
+    <div className="app">
+      <Navbar />
+      <HomePage />
+    </div>
+  );
 }
 
 export default App;

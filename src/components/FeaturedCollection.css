@@ -1,0 +1,21 @@
+.featured-collection {
+  display: flex;
+  gap: 20px;
+}
+
+.featured-item {
+  flex: 1;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.featured-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.featured-item img:hover {
+  transform: scale(1.05);
+}

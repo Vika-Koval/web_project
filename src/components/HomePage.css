@@ -1,0 +1,120 @@
+/* HomePage.css */
+.home-page section {
+  margin: 40px 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 10px;
+  text-transform: uppercase;
+}
+
+.section-header p {
+  color: #666;
+}
+
+.shop-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.shop-button button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.shop-button button span {
+  margin-left: 5px;
+}
+
+.navigation-dots {
+  display: flex;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ddd;
+  margin: 0 4px;
+}
+
+.dot.active {
+  background-color: #333;
+}
+
+.item-count {
+  color: #666;
+  margin-left: 5px;
+}
+
+.view-all {
+  margin-left: auto;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+}
+
+.navigation-arrows {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.arrow-button {
+  background: none;
+  border: 1px solid #ddd;
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.filter-sort {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.filter span, .sort span {
+  font-size: 14px;
+  color: #666;
+  margin-right: 10px;
+}
+
+.filter-options {
+  display: flex;
+  margin-top: 5px;
+}
+
+.filter-options button {
+  background: none;
+  border: none;
+  margin-right: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-options button.active {
+  font-weight: bold;
+}
+
+.sort select {
+  border: none;
+  background: none;
+  font-size: 14px;
+}
