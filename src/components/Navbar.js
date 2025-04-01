@@ -28,11 +28,10 @@ const Navbar = () => {
           <input type="text" placeholder="Search" className="search-input" />
         </div>
       </div>
-      
       <div className="navbar-right">
-        <button className="icon-button">⭘</button>
-        <button className="icon-button">◎</button>
-        <button className="icon-button">👤</button>
+        <img src="imgs/favorite.png" alt="Icon 1" className="icon-image1" />
+        <img src="imgs/cart.png" alt="Icon 2" className="icon-image2" />
+        <img src="imgs/user.png" alt="Icon 3" className="icon-image3" />
       </div>
     </nav>
   );

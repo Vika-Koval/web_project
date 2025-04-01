@@ -1,17 +1,33 @@
 .navbar {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Вирівнює по лівому краю */
+  display: grid;
+  grid-template-areas: 
+    "left . right"
+    "center center center";
+  grid-template-columns: auto 1fr auto;
+  width: 100%;
+  padding: 10px;
 }
 
-
 .navbar-left {
+  grid-area: left;
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 10px; /* Відступ між navbar-left і navbar-center */
 }
 
+.navbar-center {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.navbar-right {
+  grid-area: right;
+  display: flex;
+  align-items: center;
+}
 
 .menu-button {
   background: none;
@@ -22,59 +38,48 @@
 }
 
 .menu-links {
-    display: none;
-    position: absolute;
-    top: 1; /* Вирівнюємо меню по верхньому краю бургер-кнопки */
-    left: 100%; /* Розташовуємо меню праворуч від кнопки */
-    padding: 0; /* Прибираємо внутрішні відступи */
-    background: none; /* Прибираємо фон */
-    box-shadow: none; /* Прибираємо тінь */
-    z-index: 100;
-    white-space: nowrap; /* Запобігає переносу тексту */
-  }
-  
-  .menu-links.show {
-    display: flex; /* Встановлюємо flex для горизонтального розташування */
-    gap: 20px; /* Відступи між елементами меню */
-  }
-  
+ display: none;
+ position: absolute;
+ top: 1; /* Вирівнюємо меню по верхньому краю бургер-кнопки */
+ left: 100%; /* Розташовуємо меню праворуч від кнопки */
+ padding: 0; /* Прибираємо внутрішні відступи */
+ background: none; /* Прибираємо фон */
+ box-shadow: none; /* Прибираємо тінь */
+ z-index: 100;
+ white-space: nowrap; /* Запобігає переносу тексту */
+}
+ 
+.menu-links.show {
+ display: flex; /* Встановлюємо flex для горизонтального розташування */
+ gap: 20px; /* Відступи між елементами меню */
+}
+
 .menu-links a {
   text-decoration: none;
   color: black;
   font-size: 16px;
-  font-weight: normal; /* Робимо текст не жирним */
+  font-weight: normal;
   cursor: pointer;
 }
-.navbar-center {
+
+/* Категорії */
+.categories {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  left: 0; /* Запобігає зміщенню */
+  margin-bottom: 10px;
 }
 
-/* Посуваємо блок із категоріями вниз */
-.categories {
-  display: flex;
-  flex-direction: column; /* Розташовує елементи вертикально */
-  align-items: flex-start; /* Вирівнює елементи по лівому краю */
-  margin: 0; /* Прибираємо всі зовнішні відступи */
-  padding: 0; /* Прибираємо всі внутрішні відступи */
-}
 .categories div {
-  font-weight: normal; /* Робить текст не жирним */
-  margin-bottom: 10px; /* Відступ між елементами */
-  font-size: 14px; /* Розмір тексту */
+  font-weight: normal;
+  margin-bottom: 10px;
+  font-size: 14px;
   cursor: pointer;
 }
 
-
-
 .search-container {
   position: relative;
-  width: 100%;
+  width: 50%;
 }
 
 .search-input {
@@ -95,14 +100,9 @@
   cursor: pointer;
 }
 
-.navbar-right {
-  display: flex;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  margin-left: 15px;
+.icon-image1, .icon-image2, .icon-image3 {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
   cursor: pointer;
 }
