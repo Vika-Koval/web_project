@@ -8,15 +8,13 @@ const HomePage = () => {
   const newCollectionItems = [
     {
       id: 1,
-      image: '/images/white-outfit.jpg',
-      name: 'White Outfit Collection',
-      price: 149.99
+      image: '/imgs/girl.png',
+      name: 'girl1',
     },
     {
       id: 2,
-      image: '/images/black-shirt.jpg',
-      name: 'Graphic Black T-Shirt',
-      price: 59.99
+      image: '/imgs/girl2.png',
+      name: 'girl2',
     }
   ];
   

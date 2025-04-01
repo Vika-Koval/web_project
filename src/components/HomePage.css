@@ -14,7 +14,18 @@
 }
 
 .collection-images {
-  flex: 2;
+  flex: 1; /* Зменшуємо пропорцію контейнера */
+  max-width: 600px; /* Встановлюємо максимальну ширину */
+}
+
+.collection-images img {
+  width: 100%; /* Зображення займає всю ширину контейнера */
+  height: auto; /* Зберігаємо пропорції зображення */
+  object-fit: cover; /* Забезпечує гарне обрізання зображення */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Більш помітна тінь */
+  border-radius: 8px; /* Закруглені кути */
+  border: 1px solid #ddd; /* Легка сіра рамка */
+  background-color: white; /* Білий фон для зображень */
 }
 
 .section-header {
@@ -24,12 +35,12 @@
 }
 
 .title-container h2 {
-  font-size: 32px;
+  font-size: 48px; /* Збільшуємо розмір шрифту */
   font-weight: bold;
   text-transform: uppercase;
-  line-height: 1;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
+  line-height: 1.2; /* Збільшуємо міжрядковий інтервал для кращого вигляду */
+  letter-spacing: 2px; /* Додаємо більше простору між літерами */
+  margin-bottom: 10px; /* Збільшуємо відступ знизу */
 }
 
 .title-container p {
@@ -42,7 +53,7 @@
 .shop-navigation {
   display: flex;
   align-items: center;
-  margin-top: 40%;
+  margin-top: 37%;
 }
 
 .shop-btn {
