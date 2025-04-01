@@ -1,16 +1,17 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  align-items: flex-start; /* Вирівнює по лівому краю */
 }
+
 
 .navbar-left {
   display: flex;
   align-items: center;
   position: relative;
+  margin-bottom: 10px; /* Відступ між navbar-left і navbar-center */
 }
+
 
 .menu-button {
   background: none;
@@ -37,34 +38,39 @@
     gap: 20px; /* Відступи між елементами меню */
   }
   
-/* Робимо текст у меню не жирним */
 .menu-links a {
-    text-decoration: none;
-    color: black;
-    font-size: 16px;
-    font-weight: normal; /* Робимо текст не жирним */
-    cursor: pointer;
-  }
-  
-  /* Посуваємо блок із категоріями вниз */
-  .categories {
-    display: flex;
-    flex-direction: column; /* Розташовує елементи вертикально */
-    align-items: flex-start; /* Вирівнює елементи по лівому краю */
-    margin-top: 20px; /* Додаємо відступ зверху */
-    margin-bottom: 10px; /* Відступ між категоріями та іншими елементами */
-  }
-  
-  .categories div {
-    font-weight: normal; /* Робить текст не жирним */
-    margin-bottom: 10px; /* Відступ між елементами */
-    font-size: 14px; /* Розмір тексту */
-    cursor: pointer;
-  }
-.navbar-center {
-  flex-grow: 1;
-  margin: 0 40px;
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  font-weight: normal; /* Робимо текст не жирним */
+  cursor: pointer;
 }
+.navbar-center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  left: 0; /* Запобігає зміщенню */
+}
+
+/* Посуваємо блок із категоріями вниз */
+.categories {
+  display: flex;
+  flex-direction: column; /* Розташовує елементи вертикально */
+  align-items: flex-start; /* Вирівнює елементи по лівому краю */
+  margin: 0; /* Прибираємо всі зовнішні відступи */
+  padding: 0; /* Прибираємо всі внутрішні відступи */
+}
+.categories div {
+  font-weight: normal; /* Робить текст не жирним */
+  margin-bottom: 10px; /* Відступ між елементами */
+  font-size: 14px; /* Розмір тексту */
+  cursor: pointer;
+}
+
+
 
 .search-container {
   position: relative;
