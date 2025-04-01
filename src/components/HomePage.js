@@ -71,16 +71,20 @@ const HomePage = () => {
   return (
     <div className="home-page">
       <section className="new-collection">
-        <div className="section-header">
-          <h2>NEW COLLECTION</h2>
-          <p>Summer 2024</p>
-        </div>
-        <FeaturedCollection items={newCollectionItems} />
-        <div className="shop-button">
-          <button>Go To Shop <span>→</span></button>
-          <div className="navigation-dots">
-            <span className="dot active"></span>
-            <span className="dot"></span>
+        <div className="collection-container">
+          <div className="title-container">
+            <h2>NEW<br />COLLECTION</h2>
+            <p>Summer<br />2024</p>
+            <div className="shop-navigation">
+              <button className="shop-btn">Go To Shop <span>→</span></button>
+              <div className="navigation-arrows">
+                <button className="arrow-button active">〈</button>
+                <button className="arrow-button">〉</button>
+              </div>
+            </div>
+          </div>
+          <div className="collection-images">
+            <FeaturedCollection items={newCollectionItems} />
           </div>
         </div>
       </section>
@@ -92,9 +96,9 @@ const HomePage = () => {
           <a href="#" className="view-all">View All</a>
         </div>
         <ProductGrid items={newThisWeekItems} />
-        <div className="navigation-arrows">
-          <button className="arrow-button">←</button>
-          <button className="arrow-button">→</button>
+        <div className="navigation-arrows centered">
+          <button className="arrow-button">〈</button>
+          <button className="arrow-button">〉</button>
         </div>
       </section>
       
