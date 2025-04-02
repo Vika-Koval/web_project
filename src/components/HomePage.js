@@ -17,34 +17,41 @@ const HomePage = () => {
       name: 'girl2',
     }
   ];
-  
+
+
+
+
   const newThisWeekItems = [
     {
       id: 3,
-      image: '/images/printed-shirt.jpg',
+      image: '/images/printed-shirt.png',
+      category: 'Printed T-Shirt',
       name: 'Embroidered Geometric Print',
       price: 89.99
     },
     {
       id: 4,
-      image: '/images/basic-tee.jpg',
+      image: '/images/basic-tee.png',
+      category: 'Cotton T-Shirt',
       name: 'Basic White T-Shirt',
       price: 39.99
     },
     {
       id: 5,
-      image: '/images/graphic-tee.jpg',
+      image: '/images/graphic-tee.png',
+      category: 'Printed T-Shirt',
       name: 'Abstract Print T-Shirt',
       price: 49.99
     },
     {
       id: 6,
-      image: '/images/minimal-shirt.jpg',
+      image: "/images/minimal-shirt.png",
+      category: 'Designer T-Shirt',
       name: 'Full Sleeve Design',
       price: 59.99
     }
   ];
-  
+
   const collectionItems = [
     {
       id: 7,
@@ -65,7 +72,7 @@ const HomePage = () => {
       price: 69.99
     }
   ];
-  
+
   return (
     <div className="home-page">
       <section className="new-collection">
@@ -86,20 +93,46 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      
+
+
+
       <section className="new-this-week">
         <div className="section-header">
-          <h2>NEW THIS WEEK</h2>
-          <span className="item-count">(50)</span>
-          <a href="#" className="view-all">View All</a>
+          {/* <h2><strong>NEW THIS WEEK</strong></h2> */}
+          <h2 style={{
+            fontFamily: 'Beatrice Deck Trial, sans-serif',
+            fontSize: '50px',
+            fontWeight: 'bold'
+          }}>
+            NEW THIS WEEK
+          </h2>
+          <span className="item-count" style={{ color: "blue", textTransform: "uppercase" }}>(50)</span>
+          <a href="#" className="view-all">See All</a>
         </div>
-        <ProductGrid items={newThisWeekItems} />
-        <div className="navigation-arrows centered">
-          <button className="arrow-button">〈</button>
-          <button className="arrow-button">〉</button>
+
+        <div className="week-products-grid">
+          {newThisWeekItems.map(item => (
+            <div key={item.id} className="week-product-item">
+              <div className="week-product-image-container">
+                <img src={item.image} alt={item.name} className="week-product-image" />
+                <button className="week-add-button">+</button>
+              </div>
+              <div className="week-product-details">
+                <p className="week-product-category">{item.category}</p>
+                <h3 className="week-product-name">{item.name}</h3>
+                <p className="week-product-price">${item.price.toFixed(2)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+
+        <div className="week-pagination">
+          <button className="week-arrow prev">←</button>
+          <button className="week-arrow next">→</button>
         </div>
       </section>
-      
+
       <section className="collections">
         <div className="section-header">
           <h2>XIV COLLECTIONS 23-24</h2>
