@@ -110,6 +110,140 @@
   font-size: 14px;
 }
 
+
+
+
+
+
+
+
+.week-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px;
+}
+
+.week-product-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.week-product-image-container {
+  position: relative;
+  height: 100%;
+  background-color: #f7f7f7;
+  
+  overflow: hidden;
+}
+
+.week-product-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  height: 100%; 
+}
+
+.week-add-button {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  border: none;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: normal;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.week-product-details {
+  padding: 5px 0;
+}
+
+.week-product-category {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 4px 0;
+  font-weight: normal;
+}
+
+.week-product-name {
+  font-size: 14px;
+  color: #333;
+  margin: 0 0 4px 0;
+  font-weight: normal;
+}
+
+.week-product-price {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.week-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.week-arrow {
+  width: 30px;
+  height: 30px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.week-arrow:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .filter-sort {
   display: flex;
   justify-content: space-between;
