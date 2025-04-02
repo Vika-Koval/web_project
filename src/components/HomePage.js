@@ -55,19 +55,19 @@ const HomePage = () => {
   const collectionItems = [
     {
       id: 7,
-      image: '/images/camo-shirt.jpg',
+      image: '/images/camo-shirt.png',
       name: 'Green Henley T-Shirt',
       price: 89.99
     },
     {
       id: 8,
-      image: '/images/white-outfit.jpg',
+      image: '/images/white-outfit.png',
       name: 'Light Beige T-Height T-Shirt',
       price: 99.99
     },
     {
       id: 9,
-      image: '/images/cream-shirt.jpg',
+      image: '/images/cream-shirt.png',
       name: 'Cream Heavy T-Shirt',
       price: 69.99
     }
