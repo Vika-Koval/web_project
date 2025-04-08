@@ -49,6 +49,22 @@ const HomePage = () => {
       price: 59.99
     }
   ];
+  const ProductGrid = ({ items }) => (
+    <div className="product-grid">
+      {items.map(item => (
+        <div key={item.id} className="product-card">
+          <div className="product-image-wrapper">
+            <img src={item.image} alt={item.name} />
+          </div>
+          <div className="product-info">
+            <h3 className="product-name">{item.name}</h3>
+            <p className="product-price">${item.price.toFixed(2)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
 
   const collectionItems = [
     {
@@ -128,27 +144,28 @@ const HomePage = () => {
       </section>
 
       <section className="collections">
-        <div className="section-header">
-          <h2>XIV COLLECTIONS 23-24</h2>
-          <div className="filter-sort">
-            <div className="filter">
-              <span>Filter(s)</span>
-              <div className="filter-options">
-                <button className="active">ALL</button>
-                <button>Men</button>
-                <button>Women</button>
-                <button>Kids</button>
-              </div>
-            </div>
-            <div className="sort">
-              <span>Sort by</span>
-              <select>
-                <option>Low to High</option>
-                <option>High to Low</option>
-              </select>
-            </div>
-          </div>
-        </div>
+      <div className="section-header">
+  <div className="title-and-categories">
+    <h2>XIV COLLECTIONS 23-24</h2>
+    <div className="category-buttons">
+      <button className="active">(ALL)</button>
+      <button>Men</button>
+      <button>Women</button>
+      <button>KIDS</button>
+    </div>
+  </div>
+  <div className="filter-sort">
+    <div className="filter">
+      <span>Filter(s)</span>
+      ...
+    </div>
+    <div className="sort">
+      <span>Sort by</span>
+      ...
+    </div>
+  </div>
+</div>
+
         <ProductGrid items={collectionItems} />
       </section>
 
@@ -160,10 +177,10 @@ const HomePage = () => {
         ensuring the highest quelity exqulsite finish
         </p>
         <div className="about-images">
-          <img src="/images/about-image-1.png" alt="Fashion Design" className="about-image" />
-          <img src="/images/about-image-2.png" alt="Fashion Design" className="about-image" />
-          <img src="/images/about-image-3.png" alt="Fashion Design" className="about-image" />
-          <img src="/images/about-image-4.png" alt="Fashion Design" className="about-image" />
+          <img src="/images/design1.avif" alt="Fashion Design" className="about-image" />
+          <img src="/images/design2.avif" alt="Fashion Design" className="about-image" />
+          <img src="/images/design3.avif" alt="Fashion Design" className="about-image" />
+          <img src="/images/design5.avif" alt="Fashion Design" className="about-image" />
         </div>
       </section>
       
