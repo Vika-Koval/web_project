@@ -2,6 +2,7 @@
 import React from 'react';
 import ProductGrid from '../components/ProductGrid.js';
 import FeaturedCollection from '../components/FeaturedCollection.js';
+import Footer from '../components/Footer.js';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -17,9 +18,6 @@ const HomePage = () => {
       name: 'girl2',
     }
   ];
-
-
-
 
   const newThisWeekItems = [
     {
@@ -94,11 +92,8 @@ const HomePage = () => {
         </div>
       </section>
 
-
-
       <section className="new-this-week">
         <div className="section-header">
-          {/* <h2><strong>NEW THIS WEEK</strong></h2> */}
           <h2 style={{
             fontFamily: 'Beatrice Deck Trial, sans-serif',
             fontSize: '50px',
@@ -125,7 +120,6 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-
 
         <div className="week-pagination">
           <button className="week-arrow prev">←</button>
@@ -157,6 +151,23 @@ const HomePage = () => {
         </div>
         <ProductGrid items={collectionItems} />
       </section>
+
+      <section className="about-section">
+        <h2 className="about-title">OUR APPROACH TO FASHION DESIGN</h2>
+        <p className="about-text">
+        at elegant vogue , we blend creativity with craftsmanship to create fashion that 
+        transcends trends and stands the test of time each design is meticulously crafted, 
+        ensuring the highest quelity exqulsite finish
+        </p>
+        <div className="about-images">
+          <img src="/images/about-image-1.png" alt="Fashion Design" className="about-image" />
+          <img src="/images/about-image-2.png" alt="Fashion Design" className="about-image" />
+          <img src="/images/about-image-3.png" alt="Fashion Design" className="about-image" />
+          <img src="/images/about-image-4.png" alt="Fashion Design" className="about-image" />
+        </div>
+      </section>
+      
+      <Footer />
     </div>
   );
 };
