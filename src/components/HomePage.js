@@ -1,6 +1,5 @@
 // pages/HomePage.js
 import React from 'react';
-import ProductGrid from '../components/ProductGrid.js';
 import FeaturedCollection from '../components/FeaturedCollection.js';
 import Footer from '../components/Footer.js';
 import './HomePage.css';

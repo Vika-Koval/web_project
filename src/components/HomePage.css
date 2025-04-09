@@ -16,16 +16,29 @@
 .collection-images {
   flex: 1; /* Зменшуємо пропорцію контейнера */
   max-width: 600px; /* Встановлюємо максимальну ширину */
+  position: relative; /* Ensure positioning context for z-index */
+  z-index: 1; /* Set base z-index */
 }
 
 .collection-images img {
   width: 100%; /* Зображення займає всю ширину контейнера */
   height: auto; /* Зберігаємо пропорції зображення */
   object-fit: cover; /* Забезпечує гарне обрізання зображення */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Більш помітна тінь */
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
   border-radius: 8px; /* Закруглені кути */
   border: 1px solid #ddd; /* Легка сіра рамка */
   background-color: white; /* Білий фон для зображень */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
+  position: relative; /* Ensure proper stacking */
+  z-index: 2; /* Higher than container to stay visible */
+}
+
+.collection-images img:hover {
+  transform: scale(1.05); /* Slightly enlarge the image */
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); /* Even shadow all around the image */
+  z-index: 3; /* Even higher z-index on hover to ensure visibility */
+  opacity: 1; /* Ensure full opacity */
+  visibility: visible; /* Explicitly set visibility */
 }
 
 .section-header {
@@ -116,8 +129,6 @@
   gap: 20px;
 }
 
-
-
 .product-grid {
   display: flex;
   justify-content: space-between;
@@ -156,13 +167,21 @@
   width: 100%;
   height: 420px; /* adjust as needed */
   overflow: hidden;
+  position: relative; /* For proper stacking */
 }
 
 .product-image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.product-image-wrapper:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+}
+
 .product-info {
   margin-top: 1rem;
   display: flex;
@@ -184,7 +203,6 @@
   text-align: right;
 }
 
-
 .week-product-item {
   display: flex;
   flex-direction: column;
@@ -203,6 +221,11 @@
   display: block;
   object-fit: cover;
   height: 100%; 
+  transition: transform 0.3s ease;
+}
+
+.week-product-image-container:hover .week-product-image {
+  transform: scale(1.05);
 }
 
 .week-add-button {
@@ -222,6 +245,7 @@
   font-size: 18px;
   font-weight: normal;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 5; /* Ensure button stays above the image */
 }
 
 .week-product-details {
@@ -344,13 +368,30 @@ section:not(.new-collection) .section-header h2 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  position: relative; /* For proper stacking */
 }
 
 .about-image {
   width: 100%;
   height: auto;
   object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+  position: relative; /* For proper stacking */
+  z-index: 1;
 }
+
+/* Hover effect for about-section images */
+.about-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 2; /* Higher z-index on hover */
+  opacity: 1;
+  visibility: visible;
+}
+
 .title-and-categories {
   display: flex;
   flex-direction: column;
@@ -361,7 +402,7 @@ section:not(.new-collection) .section-header h2 {
   margin-top: 1rem;
   display: flex;
   gap: 3rem;
-  border-bottom: 5px solid #ccc; /* the grey line */
+  border-bottom: 5px solid #ccc;
   padding-bottom: 0.5rem;
 }
 
@@ -389,9 +430,26 @@ section:not(.new-collection) .section-header h2 {
   margin-top: 40px;
 }
 
+/* Modify hover effect for the staggered images to maintain their vertical offset */
+.about-image:nth-child(2):hover,
+.about-image:nth-child(4):hover {
+  transform: translateY(30px) scale(1.05);
+  z-index: 2;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Fix for Firefox and other browsers */
+.collection-images, 
+.about-images,
+.week-product-image-container {
+  backface-visibility: hidden; /* Helps with rendering issues */
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+}
+
 @media (max-width: 768px) {
   .about-images {
     grid-template-columns: repeat(2, 1fr);
-
   }
 }
