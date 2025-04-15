@@ -25,9 +25,9 @@ const ProductDetailPage = () => {
       hasRealImages: true,
       imageViews: {
         front: "/images/Мінісукня.png",
-        back: "/images/Мінісукня.png",
-        side: "/images/Мінісукня.png",
-        detail: "/images/Мінісукня.png"
+        back: "/images/Мінісукня2.png",
+        side: "/images/Мінісукня3.png",
+        detail: "/images/Мінісукня4.png"
       }
     },
     2: {
@@ -142,18 +142,6 @@ const ProductDetailPage = () => {
                     objectFit: 'cover'
                   }}
                 />
-                <div style={{
-                  position: 'absolute',
-                  bottom: '10px',
-                  left: '10px',
-                  backgroundColor: 'rgba(0,0,0,0.7)',
-                  color: 'white',
-                  padding: '5px 10px',
-                  borderRadius: '3px',
-                  fontSize: '14px'
-                }}>
-                  {viewLabels[viewMode]} (Click to rotate)
-                </div>
               </div>
             ) : (
               <div 
