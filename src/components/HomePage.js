@@ -88,6 +88,17 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
+            
+      <div className="navbar-center">
+        <div className="categories">
+          <div>MEN</div>
+          <div>WOMEN</div>
+          <div>KIDS</div>
+        </div>
+        <div className="search-container">
+          <input type="text" placeholder="Search" className="search-input" />
+        </div>
+      </div>
       <section className="new-collection">
         <div className="collection-container">
           <div className="title-container">
