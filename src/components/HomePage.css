@@ -183,8 +183,6 @@
 }
 
 .product-info {
-  margin-top: 1rem;
-  display: flex;
   justify-content: space-between;
   width: 100%;
   padding: 0 0.5rem;

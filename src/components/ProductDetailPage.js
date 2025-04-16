@@ -14,22 +14,21 @@ const ProductDetailPage = () => {
   // Mock product data - in a real app, this would come from an API call or context
   const productData = {
     1: {
-      id: 1,
-      name: 'МІНІСУКНЯ',
-      price: 99,
-      description: 'Елегантна мінісукня. Стильний дизайн і зручний крій. Ідеально підходить для повсякденного носіння та особливих випадків.',
-      colors: ['beige', 'black', 'mint', 'lavender'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL', '2X'],
-      backgroundColors: ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
-      // This product has actual image views
-      hasRealImages: true,
-      imageViews: {
-        front: "/images/Мінісукня.png",
-        back: "/images/Мінісукня2.png",
-        side: "/images/Мінісукня3.png",
-        detail: "/images/Мінісукня4.png"
-      }
-    },
+        id: 1,
+        name: 'MINI DRESS',
+        price: 29.99,
+        description: 'Elegant mini dress. Stylish design and comfortable fit. Perfect for everyday wear and special occasions.',
+        colors: ['beige', 'black', 'mint', 'lavender'],
+        sizes: ['XS', 'S', 'M', 'L', 'XL', '2X'],
+        backgroundColors: ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
+        hasRealImages: true,
+        imageViews: {
+          front: "/images/Мінісукня.png",
+          back: "/images/Мінісукня2.png",
+          side: "/images/Мінісукня3.png",
+          detail: "/images/Мінісукня4.png"
+        }
+      },
     2: {
       id: 2,
       name: 'BASIC HEAVY WEIGHT T-SHIRT',
