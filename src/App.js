@@ -23,7 +23,7 @@ function App() {
       path: "/products",
       element: (
         <div className="app">
-          <Navbar />
+           {/* <Navbar /> */}
           <ProductListingPage />
         </div>
       ),
