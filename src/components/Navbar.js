@@ -3,8 +3,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ activeFilter, setActiveFilter }) => {
   const [showMenu, setShowMenu] = useState(false);
+  
+  // Handle category click
+  const handleCategoryClick = (category) => {
+    setActiveFilter(category);
+  };
   
   return (
     <nav className="navbar">
@@ -16,6 +21,38 @@ const Navbar = () => {
           <Link to="/">Home</Link>
           <Link to="/collections">Collections</Link>
           <Link to="/new">New</Link>
+        </div>
+      </div>
+      
+      <div className="navbar-center">
+        <div className="categories">
+          <div 
+            className={activeFilter === 'ALL' ? 'active' : ''} 
+            onClick={() => handleCategoryClick('ALL')}
+          >
+            ALL
+          </div>
+          <div 
+            className={activeFilter === 'Men' ? 'active' : ''} 
+            onClick={() => handleCategoryClick('Men')}
+          >
+            MEN
+          </div>
+          <div 
+            className={activeFilter === 'Women' ? 'active' : ''} 
+            onClick={() => handleCategoryClick('Women')}
+          >
+            WOMEN
+          </div>
+          <div 
+            className={activeFilter === 'KIDS' ? 'active' : ''} 
+            onClick={() => handleCategoryClick('KIDS')}
+          >
+            KIDS
+          </div>
+        </div>
+        <div className="search-container">
+          <input type="text" placeholder="Search" className="search-input" />
         </div>
       </div>
 
