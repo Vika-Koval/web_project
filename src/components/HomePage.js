@@ -295,6 +295,9 @@ const HomePage = () => {
       <Navbar activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
 
       <section className="new-collection">
+        <div className="search-container">
+          <input type="text" placeholder="Search" className="search-input" />
+        </div>
         <div className="collection-container">
           <div className="title-container">
             <h2>NEW<br />COLLECTION</h2>

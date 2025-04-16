@@ -51,9 +51,6 @@ const Navbar = ({ activeFilter, setActiveFilter }) => {
             KIDS
           </div>
         </div>
-        <div className="search-container">
-          <input type="text" placeholder="Search" className="search-input" />
-        </div>
       </div>
 
       <div className="navbar-right">
