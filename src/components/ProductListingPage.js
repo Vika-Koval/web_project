@@ -11,14 +11,42 @@ const ProductListingPage = () => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('NEW');
-  // Removed activeQuickFilter state since we no longer need it
   const [activeGender, setActiveGender] = useState('ALL');
   const [showInStockOnly, setShowInStockOnly] = useState(false);
+  // Додаємо стан для фільтрації за ціною
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
+  const [currentPriceRange, setCurrentPriceRange] = useState({ min: 0, max: 100 });
   
   // Initialize products from our JSON data
   useEffect(() => {
     setProducts(productsData.products);
     setFilteredProducts(productsData.products);
+    
+    // Встановлюємо максимальну ціну на основі даних
+    if (productsData.products.length > 0) {
+      const maxPrice = Math.max(...productsData.products.map(product => product.price));
+      setPriceRange({ min: 0, max: maxPrice });
+      setCurrentPriceRange({ min: 0, max: maxPrice });
+      
+      // Виводимо у консоль інформацію про продукти
+      console.log("=== АНАЛІЗ ДАНИХ ПРОДУКТІВ ===");
+      console.log(`Всього продуктів: ${productsData.products.length}`);
+      
+      // Аналізуємо унікальні значення гендеру
+      const genders = [...new Set(productsData.products.map(p => p.gender))];
+      console.log("Унікальні гендери в даних:", genders);
+      
+      // Підрахунок продуктів за гендером
+      const genderCounts = {};
+      productsData.products.forEach(p => {
+        const gender = p.gender || 'UNDEFINED';
+        genderCounts[gender] = (genderCounts[gender] || 0) + 1;
+      });
+      console.log("Кількість продуктів за гендером:", genderCounts);
+      
+      // Логуємо перший продукт для аналізу структури
+      console.log("Перший продукт:", JSON.stringify(productsData.products[0], null, 2));
+    }
   }, []);
 
   // Apply filters whenever dependencies change
@@ -39,7 +67,34 @@ const ProductListingPage = () => {
     
     // Filter by gender
     if (activeGender !== 'ALL') {
-      result = result.filter(product => product.gender === activeGender);
+      console.log("Фільтруємо за гендером:", activeGender);
+      
+      // Перевіряємо значення гендера у кожному продукті
+      result = result.filter(product => {
+        // Перевіряємо, чи існує поле gender
+        if (!product.gender) return false;
+        
+        const productGender = String(product.gender).toUpperCase().trim();
+        const filterGender = activeGender.toUpperCase().trim();
+        
+        // Виконуємо різні перевірки для знаходження відповідності
+        if (filterGender === 'MEN') {
+          return ['MEN', 'MAN', 'MALE', 'M', 'MENS', "MEN'S", 'ЧОЛОВІЧИЙ', 'ЧОЛОВІК', 'Ч'].includes(productGender);
+        } 
+        else if (filterGender === 'WOMEN') {
+          return ['WOMEN', 'WOMAN', 'FEMALE', 'F', 'W', 'WOMENS', "WOMEN'S", 'ЖІНОЧИЙ', 'ЖІНКА', 'Ж'].includes(productGender);
+        }
+        else if (filterGender === 'KIDS') {
+          return ['KIDS', 'KID', 'CHILD', 'CHILDREN', 'ДИТЯЧИЙ', 'ДІТИ'].includes(productGender);
+        }
+        
+        // Якщо не знайдено у варіантах вище, використовуємо просту перевірку
+        return productGender === filterGender || 
+               productGender.includes(filterGender) || 
+               filterGender.includes(productGender);
+      });
+      
+      console.log(`Знайдено ${result.length} продуктів після фільтрації за гендером`);
     }
     
     // Filter by category
@@ -49,7 +104,11 @@ const ProductListingPage = () => {
       result = result.filter(product => product.category === activeCategory);
     }
     
-    // We've removed quick filters as requested
+    // Filter by price range
+    result = result.filter(product => 
+      product.price >= currentPriceRange.min && 
+      product.price <= currentPriceRange.max
+    );
     
     // Apply search query
     if (searchQuery.trim() !== '') {
@@ -63,7 +122,7 @@ const ProductListingPage = () => {
     }
     
     setFilteredProducts(result);
-  }, [products, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery]);
+  }, [products, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery, currentPriceRange]);
 
   // Toggle size selection
   const toggleSize = (size) => {
@@ -81,6 +140,7 @@ const ProductListingPage = () => {
   
   // Handle gender change
   const handleGenderChange = (gender) => {
+    console.log("Змінено гендер на:", gender);
     setActiveGender(gender);
   };
 
@@ -92,6 +152,27 @@ const ProductListingPage = () => {
   // Toggle in-stock only filter
   const toggleInStockFilter = () => {
     setShowInStockOnly(!showInStockOnly);
+  };
+  
+  // Handle price range slider change
+  const handlePriceSliderChange = (e) => {
+    setCurrentPriceRange({ ...currentPriceRange, max: Number(e.target.value) });
+  };
+  
+  // Handle min price input change
+  const handleMinPriceChange = (e) => {
+    const value = Number(e.target.value);
+    if (value >= 0 && value <= currentPriceRange.max) {
+      setCurrentPriceRange({ ...currentPriceRange, min: value });
+    }
+  };
+  
+  // Handle max price input change
+  const handleMaxPriceChange = (e) => {
+    const value = Number(e.target.value);
+    if (value >= currentPriceRange.min && value <= priceRange.max) {
+      setCurrentPriceRange({ ...currentPriceRange, max: value });
+    }
   };
 
   return (
@@ -192,16 +273,35 @@ const ProductListingPage = () => {
               </ul>
             </div>
             
-            {/* Colors section removed as requested */}
-            
             <div className="filter-section">
               <h4>Price Range</h4>
               <div className="price-range">
-                <input type="range" min="0" max="100" className="price-slider" />
+                <input 
+                  type="range" 
+                  min={priceRange.min} 
+                  max={priceRange.max} 
+                  value={currentPriceRange.max}
+                  onChange={handlePriceSliderChange}
+                  className="price-slider" 
+                />
                 <div className="price-inputs">
-                  <input type="number" placeholder="Min" />
+                  <input 
+                    type="number" 
+                    placeholder="Min" 
+                    value={currentPriceRange.min}
+                    onChange={handleMinPriceChange}
+                    min={priceRange.min}
+                    max={currentPriceRange.max}
+                  />
                   <span>-</span>
-                  <input type="number" placeholder="Max" />
+                  <input 
+                    type="number" 
+                    placeholder="Max" 
+                    value={currentPriceRange.max}
+                    onChange={handleMaxPriceChange}
+                    min={currentPriceRange.min}
+                    max={priceRange.max}
+                  />
                 </div>
               </div>
             </div>
@@ -218,8 +318,6 @@ const ProductListingPage = () => {
                 />
               </div>
             </div>
-            
-            {/* Quick filters removed as requested */}
             
             <div className="products-grid">
               {filteredProducts.length > 0 ? (
