@@ -1,90 +1,60 @@
 // pages/ProductDetailPage.js
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductDetailPage.css';
+import productsData from './product.json';
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
+  const location = useLocation();
   const [selectedColor, setSelectedColor] = useState('black');
   const [selectedSize, setSelectedSize] = useState('M');
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState('front'); // 'front', 'back', 'side', 'top'
+  const [product, setProduct] = useState(null);
   
-  // Mock product data - in a real app, this would come from an API call or context
-  const productData = {
-    1: {
-        id: 1,
-        name: 'MINI DRESS',
-        price: 29.99,
-        description: 'Elegant mini dress. Stylish design and comfortable fit. Perfect for everyday wear and special occasions.',
+  useEffect(() => {
+    // Find the selected product from the products data
+    const parsedProductId = parseInt(productId);
+    const foundProduct = productsData.products.find(p => p.id === parsedProductId);
+
+    // Map the product data to match the structure expected by this component
+    if (foundProduct) {
+      const productData = {
+        id: foundProduct.id,
+        name: foundProduct.name.toUpperCase(),
+        price: foundProduct.price,
+        description: 'Elegant design and comfortable fit. Perfect for everyday wear and special occasions.',
         colors: ['beige', 'black', 'mint', 'lavender'],
-        sizes: ['XS', 'S', 'M', 'L', 'XL', '2X'],
+        sizes: foundProduct.sizes || ['XS', 'S', 'M', 'L', 'XL'],
         backgroundColors: ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
-        hasRealImages: true,
+        hasRealImages: foundProduct.id === 1, // Only product 1 has real images in the current setup
+        imagePath: foundProduct.imagePath, // Store the main image path from product listing
         imageViews: {
-          front: "/images/Мінісукня.png",
-          back: "/images/Мінісукня2.png",
-          side: "/images/Мінісукня3.png",
-          detail: "/images/Мінісукня4.png"
+          front: foundProduct.id === 1 ? "/images/Мінісукня.png" : foundProduct.imagePath,
+          back: foundProduct.id === 1 ? "/images/Мінісукня2.png" : null,
+          side: foundProduct.id === 1 ? "/images/Мінісукня3.png" : null,
+          detail: foundProduct.id === 1 ? "/images/Мінісукня4.png" : null
         }
-      },
-    2: {
-      id: 2,
-      name: 'BASIC HEAVY WEIGHT T-SHIRT',
-      price: 29,
-      description: 'Classic oversized fit. Crew neck and short sleeves. Premium cotton fabric.',
-      colors: ['beige', 'black', 'white', 'gray'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL', '2X'],
-      backgroundColors: ['#f0d0c0', '#303030', '#f0f0f0', '#a0a0a0'],
-      hasRealImages: false
-    },
-    3: {
-      id: 3,
-      name: 'FULL SLEEVE ZIPPER',
-      price: 29,
-      description: 'Unique design with full sleeves. Camp collar with zipper closure.',
-      colors: ['black', 'white', 'green', 'blue'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL'],
-      backgroundColors: ['#303030', '#f0f0f0', '#c0e0d0', '#d0d0e0'],
-      hasRealImages: false
-    },
-    4: {
-      id: 4,
-      name: 'MINIMAL PRINT DESIGN',
-      price: 29,
-      description: 'Clean aesthetic with minimal detailing. Premium materials and construction.',
-      colors: ['black', 'white', 'beige'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      backgroundColors: ['#303030', '#f0f0f0', '#f0d0c0'],
-      hasRealImages: false
-    },
-    5: {
-      id: 5,
-      name: 'GREEN HENLEY T-SHIRT',
-      price: 29,
-      description: 'Comfortable henley design with button placket. Made from soft cotton blend.',
-      colors: ['green', 'blue', 'black', 'white'],
-      sizes: ['XS', 'S', 'M', 'L', 'XL', '2X'],
-      backgroundColors: ['#c0e0d0', '#d0d0e0', '#303030', '#f0f0f0'],
-      hasRealImages: false
-    },
-    6: {
-      id: 6,
-      name: 'LIGHT BEIGE T-HEIGHT T-SHIRT',
-      price: 29,
-      description: 'Classic fit with special height design. Premium quality cotton fabric.',
-      colors: ['beige', 'white', 'black', 'gray'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      backgroundColors: ['#f0d0c0', '#f0f0f0', '#303030', '#a0a0a0'],
-      hasRealImages: false
+      };
+      
+      setProduct(productData);
+      
+      // Set the initial color if the product has a color property
+      if (foundProduct.color) {
+        setSelectedColor(foundProduct.color.toLowerCase());
+      }
+      
+      // Set initial size to the first available size
+      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
+        setSelectedSize(foundProduct.sizes[0]);
+      }
     }
-  };
-  
-  const product = productData[productId];
+  }, [productId]);
 
   if (!product) {
-    return <div className="product-not-found">Product not found</div>;
+    return <div className="product-not-found">Loading product...</div>;
   }
 
   // Generate placeholder image components instead of actual images for products without real images
@@ -116,20 +86,79 @@ const ProductDetailPage = () => {
     side: 'Side View',
     detail: 'Detail View'
   };
+  
+  // Function to change color and update image
+  const handleColorChange = (color) => {
+    setSelectedColor(color);
+    
+    // Change the main image index based on selected color
+    const colorIndex = product.colors.indexOf(color);
+    if (colorIndex >= 0) {
+      setMainImageIndex(colorIndex);
+    }
+  };
+  
+  // Get the current background color based on selected color or main image index
+  const getCurrentBackgroundColor = () => {
+    const colorIndex = product.colors.indexOf(selectedColor);
+    if (colorIndex >= 0 && colorIndex < product.backgroundColors.length) {
+      return product.backgroundColors[colorIndex];
+    }
+    // Fallback to the background color based on main image index
+    return product.backgroundColors[mainImageIndex] || '#ffffff';
+  };
 
   return (
     <div className="product-detail-page">
-      <div className="product-detail-container">
-        <div className="product-gallery">
-          <div className="main-image-container">
-            {product.hasRealImages ? (
+      <div className="product-detail-container" style={{ 
+        display: 'flex',
+        flexDirection: 'row',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '20px'
+      }}>
+        <div className="product-gallery" style={{ 
+          flex: '1',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative'
+        }}>
+          <div className="main-image-container" style={{
+            width: '100%',
+            marginBottom: '10px',
+            overflow: 'hidden'
+          }}>
+            {mainImageIndex > 0 ? (
+              // Show a colored square when a color thumbnail is selected
+              <div 
+                className="main-product-image color-display" 
+                style={{ 
+                  position: 'relative',
+                  width: '100%',
+                  height: '600px',
+                  backgroundColor: getCurrentBackgroundColor(),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <div style={{ 
+                  color: getCurrentBackgroundColor() === '#303030' ? '#fff' : '#333',
+                  fontSize: '24px',
+                  fontWeight: 'bold'
+                }}>
+                  {product.name} - {selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1)}
+                </div>
+              </div>
+            ) : product.hasRealImages ? (
               <div 
                 className="main-product-image" 
                 onClick={handleImageClick}
                 style={{ 
                   cursor: 'pointer',
                   position: 'relative',
-                  width: '100%'
+                  width: '100%',
+                  height: '600px'
                 }}
               >
                 <img 
@@ -138,99 +167,155 @@ const ProductDetailPage = () => {
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover'
+                    objectFit: 'contain'
                   }}
                 />
               </div>
             ) : (
               <div 
-                className="main-product-placeholder" 
+                className="main-product-image" 
                 style={{ 
-                  backgroundColor: placeholderImages[mainImageIndex].backgroundColor,
-                  height: '500px',
+                  position: 'relative',
                   width: '100%',
+                  height: '600px',
+                }}
+              >
+                <img 
+                  src={product.imagePath} 
+                  alt={product.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          
+          {/* Fixed-position thumbnails column on the right side */}
+          <div className="thumbnail-images" style={{
+            position: 'absolute',
+            right: '-110px',
+            top: '0',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100px'
+          }}>
+            {/* Product thumbnail image first */}
+            <div 
+              className={`thumbnail product-thumbnail ${mainImageIndex === 0 ? 'active' : ''}`} 
+              onClick={() => {
+                setMainImageIndex(0);
+                setViewMode('front');
+              }}
+              style={{
+                height: '100px',
+                width: '100px',
+                marginBottom: '10px',
+                cursor: 'pointer',
+                border: mainImageIndex === 0 ? '2px solid #000' : '1px solid #ddd',
+                overflow: 'hidden'
+              }}
+            >
+              <img 
+                src={product.imagePath} 
+                alt={`${product.name} thumbnail`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            </div>
+            
+            {/* Color squares for thumbnail selection */}
+            {product.colors.slice(0, 3).map((color, index) => (
+              <div 
+                key={`color-${index}`}
+                className={`thumbnail ${mainImageIndex === index + 1 ? 'active' : ''}`} 
+                onClick={() => {
+                  setMainImageIndex(index + 1);
+                  // Also update the selected color to match this view
+                  if (index < product.colors.length) {
+                    setSelectedColor(product.colors[index]);
+                  }
+                }}
+                style={{
+                  backgroundColor: color === 'beige' ? '#f0d0c0' :
+                                  color === 'black' ? '#303030' :
+                                  color === 'mint' ? '#c0e0d0' :
+                                  color === 'lavender' ? '#e0d0e0' : 
+                                  product.backgroundColors[index],
+                  height: '100px',
+                  width: '100px',
+                  marginBottom: '10px',
+                  cursor: 'pointer',
+                  border: mainImageIndex === index + 1 ? '2px solid #000' : '1px solid #ddd',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
               >
-                <div style={{ color: placeholderImages[mainImageIndex].backgroundColor === '#303030' ? '#fff' : '#333', fontWeight: 'bold' }}>
-                  {product.name} - View {mainImageIndex + 1}
+                <div style={{ 
+                  color: color === 'black' ? '#fff' : '#333', 
+                  fontSize: '14px', 
+                  textAlign: 'center'
+                }}>
+                  View {index + 1}
                 </div>
               </div>
-            )}
-          </div>
-          <div className="thumbnail-images">
-            {product.hasRealImages ? (
-              // For products with real images, show thumbnails for all views
-              Object.entries(product.imageViews).map(([view, url], index) => (
-                <div 
-                  key={view} 
-                  className={`thumbnail ${viewMode === view ? 'active' : ''}`} 
-                  onClick={() => setViewMode(view)}
-                  style={{
-                    height: '80px',
-                    width: '80px',
-                    margin: '5px',
-                    cursor: 'pointer',
-                    border: viewMode === view ? '2px solid #000' : '1px solid #ddd',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <img 
-                    src={url} 
-                    alt={`${product.name} - ${viewLabels[view]} thumbnail`}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                </div>
-              ))
-            ) : (
-              // For products without real images, show the color-based placeholders
-              placeholderImages.map((image, index) => (
-                <div 
-                  key={index} 
-                  className={`thumbnail ${mainImageIndex === index ? 'active' : ''}`} 
-                  onClick={() => setMainImageIndex(index)}
-                  style={{
-                    backgroundColor: image.backgroundColor,
-                    height: '80px',
-                    width: '80px',
-                    margin: '5px',
-                    cursor: 'pointer',
-                    border: mainImageIndex === index ? '2px solid #000' : '1px solid #ddd'
-                  }}
-                >
-                  <div style={{ color: image.backgroundColor === '#303030' ? '#fff' : '#333', fontSize: '10px', textAlign: 'center', paddingTop: '30px' }}>
-                    View {index + 1}
-                  </div>
-                </div>
-              ))
-            )}
+            ))}
           </div>
         </div>
         
-        <div className="product-info">
-          <h1 className="product-title">{product.name}</h1>
-          <div className="product-price">${product.price}</div>
-          <div className="product-tax">MRP incl. of all taxes</div>
+        <div className="product-info" style={{ 
+          flex: '1',
+          padding: '0 20px',
+          marginLeft: '100px'  // Provide space for the thumbnails
+        }}>
+          <h1 className="product-title" style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            marginBottom: '10px'
+          }}>{product.name}</h1>
+          <div className="product-price" style={{
+            fontSize: '20px',
+            fontWeight: 'bold',
+            marginBottom: '5px'
+          }}>${product.price}</div>
+          <div className="product-tax" style={{
+            fontSize: '12px',
+            color: '#666',
+            marginBottom: '20px'
+          }}>MRP incl. of all taxes</div>
           
-          <div className="product-description">
+          <div className="product-description" style={{
+            fontSize: '14px',
+            lineHeight: '1.5',
+            marginBottom: '20px'
+          }}>
             {product.description}
           </div>
           
           <div className="product-options">
-            <div className="color-selection">
-              <label>Color:</label>
-              <div className="color-options">
+            <div className="color-selection" style={{
+              marginBottom: '20px'
+            }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '10px',
+                fontWeight: 'bold'
+              }}>Color:</label>
+              <div className="color-options" style={{
+                display: 'flex'
+              }}>
                 {product.colors.map(color => (
                   <button 
                     key={color} 
                     className={`color-swatch ${selectedColor === color ? 'selected' : ''}`}
-                    onClick={() => setSelectedColor(color)}
+                    onClick={() => handleColorChange(color)}
                     aria-label={color}
                     style={{
                       backgroundColor: color === 'beige' ? '#f0d0c0' :
@@ -253,9 +338,17 @@ const ProductDetailPage = () => {
               </div>
             </div>
             
-            <div className="size-selection">
-              <label>Size:</label>
-              <div className="size-options">
+            <div className="size-selection" style={{
+              marginBottom: '20px'
+            }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '10px',
+                fontWeight: 'bold'
+              }}>Size:</label>
+              <div className="size-options" style={{
+                display: 'flex'
+              }}>
                 {product.sizes.map(size => (
                   <button 
                     key={size} 
@@ -276,8 +369,14 @@ const ProductDetailPage = () => {
               </div>
             </div>
             
-            <div className="size-guide">
-              <a href="#" style={{ textDecoration: 'underline', fontSize: '14px' }}>FIND YOUR SIZE | MEASUREMENT GUIDE</a>
+            <div className="size-guide" style={{
+              marginBottom: '20px'
+            }}>
+              <a href="#" style={{ 
+                textDecoration: 'underline', 
+                fontSize: '14px',
+                color: '#000'
+              }}>FIND YOUR SIZE | MEASUREMENT GUIDE</a>
             </div>
             
             <button className="add-to-cart" style={{
@@ -287,7 +386,8 @@ const ProductDetailPage = () => {
               border: 'none',
               marginTop: '20px',
               cursor: 'pointer',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              width: '100%'
             }}>ADD</button>
           </div>
         </div>

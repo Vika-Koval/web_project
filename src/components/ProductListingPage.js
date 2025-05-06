@@ -13,39 +13,45 @@ const ProductListingPage = () => {
   const [activeCategory, setActiveCategory] = useState('NEW');
   const [activeGender, setActiveGender] = useState('ALL');
   const [showInStockOnly, setShowInStockOnly] = useState(false);
-  // Додаємо стан для фільтрації за ціною
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
   const [currentPriceRange, setCurrentPriceRange] = useState({ min: 0, max: 100 });
   
-  // Initialize products from our JSON data
   useEffect(() => {
-    setProducts(productsData.products);
-    setFilteredProducts(productsData.products);
+    // Modify the jeans product to be out of stock and not new
+    const modifiedProducts = productsData.products.map(product => {
+      if (product.category === 'JEANS') {
+        return { ...product, inStock: false, isNew: false };
+      }
+      return product;
+    });
     
-    // Встановлюємо максимальну ціну на основі даних
-    if (productsData.products.length > 0) {
-      const maxPrice = Math.max(...productsData.products.map(product => product.price));
+    setProducts(modifiedProducts);
+    setFilteredProducts(modifiedProducts);
+    
+    // Set max price based on data
+    if (modifiedProducts.length > 0) {
+      const maxPrice = Math.max(...modifiedProducts.map(product => product.price));
       setPriceRange({ min: 0, max: maxPrice });
       setCurrentPriceRange({ min: 0, max: maxPrice });
       
-      // Виводимо у консоль інформацію про продукти
-      console.log("=== АНАЛІЗ ДАНИХ ПРОДУКТІВ ===");
-      console.log(`Всього продуктів: ${productsData.products.length}`);
+      // Log product information
+      console.log("=== PRODUCT DATA ANALYSIS ===");
+      console.log(`Total products: ${modifiedProducts.length}`);
       
-      // Аналізуємо унікальні значення гендеру
-      const genders = [...new Set(productsData.products.map(p => p.gender))];
-      console.log("Унікальні гендери в даних:", genders);
+      // Analyze unique gender values
+      const genders = [...new Set(modifiedProducts.map(p => p.gender))];
+      console.log("Unique genders in data:", genders);
       
-      // Підрахунок продуктів за гендером
+      // Count products by gender
       const genderCounts = {};
-      productsData.products.forEach(p => {
+      modifiedProducts.forEach(p => {
         const gender = p.gender || 'UNDEFINED';
         genderCounts[gender] = (genderCounts[gender] || 0) + 1;
       });
-      console.log("Кількість продуктів за гендером:", genderCounts);
+      console.log("Products count by gender:", genderCounts);
       
-      // Логуємо перший продукт для аналізу структури
-      console.log("Перший продукт:", JSON.stringify(productsData.products[0], null, 2));
+      // Log first product structure
+      console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
     }
   }, []);
 
@@ -67,17 +73,17 @@ const ProductListingPage = () => {
     
     // Filter by gender
     if (activeGender !== 'ALL') {
-      console.log("Фільтруємо за гендером:", activeGender);
+      console.log("Filtering by gender:", activeGender);
       
-      // Перевіряємо значення гендера у кожному продукті
+      // Check gender value in each product
       result = result.filter(product => {
-        // Перевіряємо, чи існує поле gender
+        // Check if gender field exists
         if (!product.gender) return false;
         
         const productGender = String(product.gender).toUpperCase().trim();
         const filterGender = activeGender.toUpperCase().trim();
         
-        // Виконуємо різні перевірки для знаходження відповідності
+        // Different checks to find a match
         if (filterGender === 'MEN') {
           return ['MEN', 'MAN', 'MALE', 'M', 'MENS', "MEN'S", 'ЧОЛОВІЧИЙ', 'ЧОЛОВІК', 'Ч'].includes(productGender);
         } 
@@ -88,13 +94,13 @@ const ProductListingPage = () => {
           return ['KIDS', 'KID', 'CHILD', 'CHILDREN', 'ДИТЯЧИЙ', 'ДІТИ'].includes(productGender);
         }
         
-        // Якщо не знайдено у варіантах вище, використовуємо просту перевірку
+        // If not found in variants above, use simple check
         return productGender === filterGender || 
                productGender.includes(filterGender) || 
                filterGender.includes(productGender);
       });
       
-      console.log(`Знайдено ${result.length} продуктів після фільтрації за гендером`);
+      console.log(`Found ${result.length} products after gender filtering`);
     }
     
     // Filter by category
@@ -140,7 +146,7 @@ const ProductListingPage = () => {
   
   // Handle gender change
   const handleGenderChange = (gender) => {
-    console.log("Змінено гендер на:", gender);
+    console.log("Changed gender to:", gender);
     setActiveGender(gender);
   };
 
@@ -328,8 +334,36 @@ const ProductListingPage = () => {
                         src={product.imagePath} 
                         alt={product.name}
                       />
-                      {!product.inStock && <div className="out-of-stock">Out of Stock</div>}
-                      {product.isNew && <div className="new-tag">New</div>}
+                      {!product.inStock && (
+                        <div className="out-of-stock" style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          backgroundColor: '#e53935',
+                          color: 'white',
+                          padding: '5px 10px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          zIndex: 2
+                        }}>
+                          Out of Stock
+                        </div>
+                      )}
+                      {product.isNew && product.inStock && (
+                        <div className="new-tag" style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          backgroundColor: '#4CAF50',
+                          color: 'white',
+                          padding: '5px 10px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          zIndex: 2
+                        }}>
+                          New
+                        </div>
+                      )}
                     </div>
                     <div className="product-meta">
                       <div className="product-category">{product.category}</div>
