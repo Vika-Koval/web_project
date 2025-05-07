@@ -34,13 +34,13 @@ const Navbar = ({ activeFilter, setActiveFilter }) => {
           </div>
           <div 
             className={activeFilter === 'Men' ? 'active' : ''} 
-            onClick={() => handleCategoryClick('Men')}
+            onClick={() => handleCategoryClick('MEN')}
           >
             MEN
           </div>
           <div 
             className={activeFilter === 'Women' ? 'active' : ''} 
-            onClick={() => handleCategoryClick('Women')}
+            onClick={() => handleCategoryClick('WOMEN')}
           >
             WOMEN
           </div>
