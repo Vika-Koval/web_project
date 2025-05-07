@@ -468,6 +468,85 @@ section:not(.new-collection) .section-header h2 {
   -webkit-transform-style: preserve-3d;
 }
 
+
+
+
+.scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+
+.collection-images {
+  flex: 1; /* Зменшуємо пропорцію контейнера */
+  max-width: 600px; /* Встановлюємо максимальну ширину */
+  position: relative; /* Ensure positioning context for z-index */
+  z-index: 1; /* Set base z-index */
+}
+
+.featured-items {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+}
+
+.featured-item {
+  /* width: 48%; Adjust based on original size */
+  margin-right: 2%;
+
+  width: 100%; /* Зображення займає всю ширину контейнера */
+  height: auto; /* Зберігаємо пропорції зображення */
+  object-fit: cover; /* Забезпечує гарне обрізання зображення */
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
+  border-radius: 8px; /* Закруглені кути */
+  border: 1px solid #ddd; /* Легка сіра рамка */
+  background-color: white; /* Білий фон для зображень */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
+  position: relative; /* Ensure proper stacking */
+  z-index: 2; /* Higher than container to stay visible */
+}
+
+/* .featured-image { */
+  /* width: 100%; */
+  /* height: auto; */
+  
+/* } */
+/*  */
+
+
+
+.collection-images {
+  flex: 1; /* Зменшуємо пропорцію контейнера */
+  max-width: 600px; /* Встановлюємо максимальну ширину */
+  position: relative; /* Ensure positioning context for z-index */
+  z-index: 1; /* Set base z-index */
+}
+
+.collection-images img {
+  width: 100%; /* Зображення займає всю ширину контейнера */
+  height: auto; /* Зберігаємо пропорції зображення */
+  object-fit: cover; /* Забезпечує гарне обрізання зображення */
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
+  border-radius: 8px; /* Закруглені кути */
+  border: 1px solid #ddd; /* Легка сіра рамка */
+  background-color: white; /* Білий фон для зображень */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
+  position: relative; /* Ensure proper stacking */
+  z-index: 2; /* Higher than container to stay visible */
+}
+
+.collection-images img:hover {
+  transform: scale(1.05); /* Slightly enlarge the image */
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); /* Even shadow all around the image */
+  z-index: 3; /* Even higher z-index on hover to ensure visibility */
+  opacity: 1; /* Ensure full opacity */
+  visibility: visible; /* Explicitly set visibility */
+}
+
 @media (max-width: 768px) {
   .about-images {
     grid-template-columns: repeat(2, 1fr);
