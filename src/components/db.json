@@ -163,7 +163,7 @@
     {
       "id": 11,
       "name": "Women's Summer Dress",
-      "price": 0,
+      "price": 37,
       "imagePath": "/imgs/girl.png",
       "category": "DRESSES",
       "gender": "WOMEN",
@@ -174,12 +174,12 @@
       "isBestSeller": false,
       "tags": ["summer"],
       "collection": "Summer 2025",
-      "rating": 0
+      "rating": 5
     },
     {
       "id": 12,
       "name": "Casual Women's Outfit",
-      "price": 0,
+      "price": 110,
       "imagePath": "/imgs/girl2.png",
       "category": "DRESSES",
       "gender": "WOMEN",
@@ -190,7 +190,7 @@
       "isBestSeller": false,
       "tags": ["casual"],
       "collection": "Summer 2025",
-      "rating": 0
+      "rating": 4
     },
     {
       "id": 101,
@@ -227,7 +227,7 @@
     {
       "id": 201,
       "name": "Kids Play Outfit",
-      "price": 0,
+      "price": 33,
       "imagePath": "/images/kid1.jpg",
       "category": "DRESSES",
       "gender": "KIDS",
@@ -238,12 +238,12 @@
       "isBestSeller": false,
       "tags": ["casual"],
       "collection": "Summer 2025",
-      "rating": 0
+      "rating": 4.9
     },
     {
       "id": 202,           
       "name": "School Collection",
-      "price": 0,
+      "price": 12,
       "imagePath": "/images/kid2.jpg",
       "category": "DRESSES",
       "gender": "KIDS",
@@ -254,7 +254,7 @@
       "isBestSeller": false,
       "tags": ["casual"],
       "collection": "Summer 2025",
-      "rating": 0
+      "rating": 3.9
     }
   ],
   
