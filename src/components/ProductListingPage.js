@@ -189,16 +189,15 @@ const ProductListingPage = () => {
   // Handle min price input change
   const handleMinPriceChange = (e) => {
     const value = Number(e.target.value);
-    if (value >= 0 && value <= currentPriceRange.max) {
-      setCurrentPriceRange({ ...currentPriceRange, min: value });
+    if (value >= priceRange.min && value <= currentPriceRange.max) {
+      setCurrentPriceRange((prev) => ({ ...prev, min: value }));
     }
   };
   
-  // Handle max price input change
   const handleMaxPriceChange = (e) => {
     const value = Number(e.target.value);
     if (value >= currentPriceRange.min && value <= priceRange.max) {
-      setCurrentPriceRange({ ...currentPriceRange, max: value });
+      setCurrentPriceRange((prev) => ({ ...prev, max: value }));
     }
   };
 
@@ -240,31 +239,47 @@ const ProductListingPage = () => {
               </div>
               
               <div className="filter-section">
-                <h4>Size</h4>
-                <div className="size-buttons">
-                  <button 
-                    className={selectedSizes.includes('XS') ? 'active' : ''}
-                    onClick={() => toggleSize('XS')}
-                  >XS</button>
-                  <button 
-                    className={selectedSizes.includes('S') ? 'active' : ''}
-                    onClick={() => toggleSize('S')}
-                  >S</button>
-                  <button 
-                    className={selectedSizes.includes('M') ? 'active' : ''}
-                    onClick={() => toggleSize('M')}
-                  >M</button>
-                  <button 
-                    className={selectedSizes.includes('L') ? 'active' : ''}
-                    onClick={() => toggleSize('L')}
-                  >L</button>
-                  <button 
-                    className={selectedSizes.includes('XL') ? 'active' : ''}
-                    onClick={() => toggleSize('XL')}
-                  >XL</button>
-                </div>
-              </div>
-              
+  <h4>Price Range</h4>
+  <div className="price-range">
+    <div className="range-slider">
+      <input
+        type="range"
+        min={priceRange.min}
+        max={priceRange.max}
+        value={currentPriceRange.min}
+        onChange={handleMinPriceChange}
+        className="price-slider"
+      />
+      <input
+        type="range"
+        min={priceRange.min}
+        max={priceRange.max}
+        value={currentPriceRange.max}
+        onChange={handleMaxPriceChange}
+        className="price-slider"
+      />
+    </div>
+    <div className="price-inputs">
+      <input
+        type="number"
+        placeholder="Min"
+        value={currentPriceRange.min}
+        onChange={handleMinPriceChange}
+        min={priceRange.min}
+        max={currentPriceRange.max}
+      />
+      <span>-</span>
+      <input
+        type="number"
+        placeholder="Max"
+        value={currentPriceRange.max}
+        onChange={handleMaxPriceChange}
+        min={currentPriceRange.min}
+        max={priceRange.max}
+      />
+    </div>
+  </div>
+</div>
               <div className="filter-section">
                 <h4>Availability</h4>
                 <div className="checkbox-filter">
