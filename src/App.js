@@ -6,8 +6,6 @@ import ProductListingPage from './components/ProductListingPage';
 import ProductDetailPage from './components/ProductDetailPage';
 import './App.css';
 import ShoppingCart from './components/ShoppingCart';
-import Register from './components/Register';
-import Login from './components/Login';
 
 import { CartProvider } from './components/CartContext';
 
@@ -32,28 +30,7 @@ function App() {
                 <ProductDetailPage />
               </>
             } />
-<<<<<<< HEAD
             {/* No need for a separate cart route anymore */}
-=======
-            <Route path="/cart" element={
-              <>
-                <Navbar />
-                <ShoppingCart />
-              </>
-            } />
-
-              <Route path="/register" element={
-              <>
-                <Login />
-              </>
-            } />
-
-              <Route path="/login" element={
-              <>
-                <Login />
-              </>
-            } />
->>>>>>> 5fd4fba2a59ed98bca487e0eb9a8706f45758f33
           </Routes>
         </div>
       </Router>
