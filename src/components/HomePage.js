@@ -24,6 +24,11 @@ const HomePage = () => {
     navigate('/products', { state: { filter: activeFilter } });
   };
 
+    // Navigate to products page with filter
+  const handleCartClick = () => {
+      navigate('/cart', { state: { filter: activeFilter } });
+    };
+
   // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -233,7 +238,7 @@ const HomePage = () => {
             <h2>NEW<br />COLLECTION</h2>
             <p>Summer<br />2025</p>
             <div className="shop-navigation">
-              <button className="shop-btn" onClick={handleShopClick}>
+              <button className="shop-btn" onClick={handleCartClick}>
                 Go To Shop <span>→</span>
               </button>
               <div className="navigation-arrows">

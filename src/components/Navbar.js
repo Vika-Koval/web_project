@@ -19,13 +19,12 @@ const Navbar = ({ activeFilter, setActiveFilter, handleCategoryClick }) => {
         </button>
         <div className={`menu-links ${showMenu ? 'show' : ''}`}>
           <Link to="/" onClick={() => handleLinkClick('/')}>Home</Link>
-          <Link to="/collections" onClick={() => handleLinkClick('/collections')}>Collections</Link>
-          <Link to="/new" onClick={() => handleLinkClick('/new')}>New</Link>
+          <Link to="/products" onClick={() => handleLinkClick('/products')}>Products</Link>
         </div>
       </div>
       <div className="navbar-right">
         <img src="/imgs/favorite.png" alt="Icon 1" className="icon-image1" />
-        <Link to="/products" onClick={() => handleLinkClick('/products')} className="cart-link">
+        <Link to="/cart" onClick={() => handleLinkClick('/cart')} className="cart-link">
           <img src="/imgs/cart.png" alt="Cart" className="icon-image2" />
         </Link>
         <img src="/imgs/user.png" alt="Icon 3" className="icon-image3" />

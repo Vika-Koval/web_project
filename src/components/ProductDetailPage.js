@@ -1,9 +1,9 @@
-// pages/ProductDetailPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductDetailPage.css';
 import productsData from './product.json';
+import { useCart } from './CartContext'; // Import the useCart hook
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
@@ -13,6 +13,9 @@ const ProductDetailPage = () => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState('front'); // 'front', 'back', 'side', 'top'
   const [product, setProduct] = useState(null);
+  
+  // Get the cart context functions
+  const { addToCart } = useCart();
   
   useEffect(() => {
     // Find the selected product from the products data
@@ -106,6 +109,11 @@ const ProductDetailPage = () => {
     }
     // Fallback to the background color based on main image index
     return product.backgroundColors[mainImageIndex] || '#ffffff';
+  };
+  
+  // Handle adding the product to cart
+  const handleAddToCart = () => {
+    addToCart(product, 1, selectedSize, selectedColor);
   };
 
   return (
@@ -379,16 +387,22 @@ const ProductDetailPage = () => {
               }}>FIND YOUR SIZE | MEASUREMENT GUIDE</a>
             </div>
             
-            <button className="add-to-cart" style={{
-              backgroundColor: '#000',
-              color: '#fff',
-              padding: '12px 40px',
-              border: 'none',
-              marginTop: '20px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              width: '100%'
-            }}>ADD</button>
+            <button 
+              onClick={handleAddToCart}
+              className="add-to-cart" 
+              style={{
+                backgroundColor: '#000',
+                color: '#fff',
+                padding: '12px 40px',
+                border: 'none',
+                marginTop: '20px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                width: '100%'
+              }}
+            >
+              ADD TO CART
+            </button>
           </div>
         </div>
       </div>
