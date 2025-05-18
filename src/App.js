@@ -6,6 +6,8 @@ import ProductListingPage from './components/ProductListingPage';
 import ProductDetailPage from './components/ProductDetailPage';
 import './App.css';
 import ShoppingCart from './components/ShoppingCart';
+import Register from './components/Register';
+import Login from './components/Login';
 
 import { CartProvider } from './components/CartContext';
 
@@ -32,6 +34,18 @@ function App() {
               <>
                 <Navbar />
                 <ShoppingCart />
+              </>
+            } />
+
+              <Route path="/register" element={
+              <>
+                <Login />
+              </>
+            } />
+
+              <Route path="/login" element={
+              <>
+                <Login />
               </>
             } />
           </Routes>
