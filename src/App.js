@@ -1,63 +1,46 @@
-// App.js - Main component
 import React from 'react';
-import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import ProductListingPage from './components/ProductListingPage';
 import ProductDetailPage from './components/ProductDetailPage';
 import './App.css';
 
-// Method 1: Using RouterProvider (recommended in v6.4+)
+// Using the more compatible Routes/Route pattern
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <div className="app">
-          {/* <Navbar /> */}
-          <HomePage />
-        </div>
-      ),
-    },
-    {
-      path: "/products",
-      element: (
-        <div className="app">
-           {/* <Navbar /> */}
-          <ProductListingPage />
-        </div>
-      ),
-    },
-    {
-      path: "/product/:productId",
-      element: (
-        <div className="app">
-          <Navbar />
-          <ProductDetailPage />
-        </div>
-      ),
-    },
-  ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={
+            <>
+              <Navbar />
+              <ProductListingPage />
+            </>
+          } />
+          <Route path="/product/:productId" element={
+            <>
+              <Navbar />
+              <ProductDetailPage />
+            </>
+          } />
+          <Route path="/collections" element={
+            <>
+              <Navbar />
+              <div>Collections Page</div>
+            </>
+          } />
+          <Route path="/new" element={
+            <>
+              <Navbar />
+              <div>New Items Page</div>
+            </>
+          } />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
-
-// // Method 2: Alternative approach if needed
-// import { BrowserRouter, Routes, Route } from 'react-router-dom';
-// 
-// function AppAlternative() {
-//   return (
-//     <BrowserRouter>
-//       <div className="app">
-//         <Navbar />
-//         <Routes>
-//           <Route path="/" element={<HomePage />} />
-//           <Route path="/products" element={<ProductListingPage />} />
-//           <Route path="/product/:productId" element={<ProductDetailPage />} />
-//         </Routes>
-//       </div>
-//     </BrowserRouter>
-//   );
-// }
 
 export default App;

@@ -22,7 +22,7 @@
 
 .collection-images img {
   width: 100%; /* Зображення займає всю ширину контейнера */
-  height: auto; /* Зберігаємо пропорції зображення */
+  height: 368px; /* Зберігаємо пропорції зображення */
   object-fit: cover; /* Забезпечує гарне обрізання зображення */
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
   border-radius: 8px; /* Закруглені кути */
@@ -127,11 +127,11 @@
   justify-content: center;
 }
 
-.arrow-button.active {
+/* .arrow-button.active {
   background-color: #3498db;
   color: white;
   border-color: #3498db;
-}
+} */
 
 .item-count {
   color: #666;
@@ -499,7 +499,7 @@ section:not(.new-collection) .section-header h2 {
   margin-right: 2%;
 
   width: 100%; /* Зображення займає всю ширину контейнера */
-  height: auto; /* Зберігаємо пропорції зображення */
+  height: 40vh;
   object-fit: cover; /* Забезпечує гарне обрізання зображення */
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
   border-radius: 8px; /* Закруглені кути */
@@ -551,4 +551,20 @@ section:not(.new-collection) .section-header h2 {
   .about-images {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Категорії */
+.categories {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap : 20px;
+}
+
+.categories div {
+  font-weight: normal;
+  margin-bottom: 10px;
+  font-size: 14px;
+  cursor: pointer;
 }

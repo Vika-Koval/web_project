@@ -1,12 +1,12 @@
-// pages/HomePage.js
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import FeaturedCollection from '../components/FeaturedCollection.js';
 import Footer from '../components/Footer.js';
 import Navbar from '../components/Navbar.js';
 import './HomePage.css';
 
 const HomePage = () => {
-  
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('ALL');
   const [collectionIndex, setCollectionIndex] = useState(0);
   const [products, setProducts] = useState([]);
@@ -14,6 +14,20 @@ const HomePage = () => {
   const [collectionItems, setCollectionItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Define the handleCategoryClick function
+  const handleCategoryClick = (category) => {
+    setActiveFilter(category);
+  };
+  // Navigate to products page with filter
+  const handleShopClick = () => {
+    navigate('/products', { state: { filter: activeFilter } });
+  };
+
+  // Navigate to product detail page
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   // Fetch all data from our JSON Server
   useEffect(() => {
@@ -46,6 +60,8 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  // Rest of your code remains unchanged...
+  
   const getNewCollectionItems = () => {
     if (!products || products.length === 0) {
       return [];
@@ -154,31 +170,8 @@ const HomePage = () => {
     return items.slice(start, end);
   };
 
-  const ProductGrid = ({ items }) => (
-    <div className="product-grid">
-      {items.map(item => (
-        <div key={item.id} className="product-card">
-          <div className="product-image-wrapper">
-            <img src={item.image} alt={item.name} />
-          </div>
-          <div className="product-info">
-            <h3 className="product-name">{item.name}</h3>
-            <p className="product-price">${item.price.toFixed(2)}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   const [visibleRows, setVisibleRows] = useState(1);
   const itemsPerRow = 3;
-
-  const getVisibleCollectionItems = () => {
-    const items = filteredProducts.collectionItems;
-    if (!items || items.length === 0) return [];
-    
-    return items.slice(0, visibleRows * itemsPerRow);
-  };
 
   // Show loading state while fetching data
   if (loading) {
@@ -192,19 +185,50 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      {/* Pass activeFilter and setActiveFilter to Navbar */}
-      <Navbar activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+      {/* Include Navbar component */}
+      <Navbar 
+        activeFilter={activeFilter} 
+        setActiveFilter={setActiveFilter}
+        handleCategoryClick={handleCategoryClick}
+      />
+
+      <section className="filter">
+        <div className="navbar-center">
+          <div className="categories">
+            <div 
+              className={`category ${activeFilter === 'ALL' ? 'active' : ''}`} 
+              onClick={() => handleCategoryClick('ALL')}
+              style={{ cursor: 'pointer' }}
+            >
+              ALL
+            </div>
+            <div 
+              className={`category ${activeFilter === 'MEN' ? 'active' : ''}`} 
+              onClick={() => handleCategoryClick('MEN')}
+              style={{ cursor: 'pointer' }}
+            >
+              MEN
+            </div>
+            <div 
+              className={`category ${activeFilter === 'WOMEN' ? 'active' : ''}`} 
+              onClick={() => handleCategoryClick('WOMEN')}
+              style={{ cursor: 'pointer' }}
+            >
+              WOMEN
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="new-collection">
-        <div className="search-container">
-          <input type="text" placeholder="Search" className="search-input" />
-        </div>
         <div className="collection-container">
           <div className="title-container">
             <h2>NEW<br />COLLECTION</h2>
             <p>Summer<br />2025</p>
             <div className="shop-navigation">
-              <button className="shop-btn">Go To Shop <span>→</span></button>
+              <button className="shop-btn" onClick={handleShopClick}>
+                Go To Shop <span>→</span>
+              </button>
               <div className="navigation-arrows">
                 <button 
                   className={`arrow-button ${collectionIndex === 0 ? 'active' : ''}`}
@@ -220,7 +244,12 @@ const HomePage = () => {
           <div className="collection-images">
             <div className="featured-items">
               {getCurrentCollectionItems().map((item) => (
-                <div key={item.id} className="featured-item">
+                <div 
+                  key={item.id} 
+                  className="featured-item" 
+                  onClick={() => handleProductClick(item.id)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <img 
                     src={item.imagePath} 
                     alt={item.name} 
@@ -245,16 +274,27 @@ const HomePage = () => {
           <span className="item-count" style={{ color: "blue", textTransform: "uppercase" }}>
             ({filteredProducts.newThisWeekItems.length})
           </span>
-          <a href="#" className="view-all">See All</a>
+          <Link to="/new" className="view-all">See All</Link>
         </div>
 
         <div className="week-products-grid">
           {filteredProducts.newThisWeekItems.length > 0 ? (
             getCurrentWeekItems().map(item => (
-              <div key={item.id} className="week-product-item">
+              <div 
+                key={item.id} 
+                className="week-product-item"
+                onClick={() => handleProductClick(item.id)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="week-product-image-container">
                   <img src={item.image} alt={item.name} className="week-product-image" />
-                  <button className="week-add-button">+</button>
+                  <button 
+                    className="week-add-button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent navigation when clicking the button
+                      // Add to cart logic
+                    }}
+                  >+</button>
                 </div>
                 <div className="week-product-details">
                   <p className="week-product-category">{item.type}</p>
@@ -307,7 +347,12 @@ const HomePage = () => {
           {filteredProducts.collectionItems
             .slice(0, visibleRows * itemsPerRow)
             .map(item => (
-              <div key={item.id} className="product-card">
+              <div 
+                key={item.id} 
+                className="product-card"
+                onClick={() => handleProductClick(item.id)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="product-image-wrapper">
                   <img src={item.image} alt={item.name} style={{ width: '100%', height: 'auto' }} />
                 </div>
