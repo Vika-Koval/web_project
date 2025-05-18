@@ -527,8 +527,8 @@ section:not(.new-collection) .section-header h2 {
 }
 
 .collection-images img {
-  width: 100%; /* Зображення займає всю ширину контейнера */
-  height: auto; /* Зберігаємо пропорції зображення */
+  width: 100%; 
+  height: 100%;
   object-fit: cover; /* Забезпечує гарне обрізання зображення */
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
   border-radius: 8px; /* Закруглені кути */
