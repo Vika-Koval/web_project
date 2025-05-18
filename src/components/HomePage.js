@@ -216,6 +216,13 @@ const HomePage = () => {
             >
               WOMEN
             </div>
+            <div 
+              className={`category ${activeFilter === 'KIDS' ? 'active' : ''}`} 
+              onClick={() => handleCategoryClick('KIDS')}
+              style={{ cursor: 'pointer' }}
+            >
+              KIDS
+            </div>
           </div>
         </div>
       </section>
