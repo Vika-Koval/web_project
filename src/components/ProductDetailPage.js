@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductDetailPage.css';
-import productsData from './product.json';
 import { useCart } from './CartContext'; // Import the useCart hook
 
 const ProductDetailPage = () => {
@@ -13,52 +12,81 @@ const ProductDetailPage = () => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState('front'); // 'front', 'back', 'side', 'top'
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isAddedToCart, setIsAddedToCart] = useState(false); // State to track if the item was added to cart
   
   // Get the cart context functions
   const { addToCart } = useCart();
   
   useEffect(() => {
-    // Find the selected product from the products data
-    const parsedProductId = parseInt(productId);
-    const foundProduct = productsData.products.find(p => p.id === parsedProductId);
-
-    // Map the product data to match the structure expected by this component
-    if (foundProduct) {
-      const productData = {
-        id: foundProduct.id,
-        name: foundProduct.name.toUpperCase(),
-        price: foundProduct.price,
-        description: 'Elegant design and comfortable fit. Perfect for everyday wear and special occasions.',
-        colors: ['beige', 'black', 'mint', 'lavender'],
-        sizes: foundProduct.sizes || ['XS', 'S', 'M', 'L', 'XL'],
-        backgroundColors: ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
-        hasRealImages: foundProduct.id === 1, // Only product 1 has real images in the current setup
-        imagePath: foundProduct.imagePath, // Store the main image path from product listing
-        imageViews: {
-          front: foundProduct.id === 1 ? "/images/Мінісукня.png" : foundProduct.imagePath,
-          back: foundProduct.id === 1 ? "/images/Мінісукня2.png" : null,
-          side: foundProduct.id === 1 ? "/images/Мінісукня3.png" : null,
-          detail: foundProduct.id === 1 ? "/images/Мінісукня4.png" : null
+    // Fetch product data from JSON Server
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3001/products/${productId}`);
+        
+        if (!response.ok) {
+          throw new Error('Product not found');
         }
-      };
-      
-      setProduct(productData);
-      
-      // Set the initial color if the product has a color property
-      if (foundProduct.color) {
-        setSelectedColor(foundProduct.color.toLowerCase());
+        
+        const foundProduct = await response.json();
+
+        // Map the product data to match the structure expected by this component
+        if (foundProduct) {
+          const productData = {
+            id: foundProduct.id,
+            name: foundProduct.name.toUpperCase(),
+            price: foundProduct.price,
+            description: foundProduct.description || 'Elegant design and comfortable fit. Perfect for everyday wear and special occasions.',
+            colors: foundProduct.colors || ['beige', 'black', 'mint', 'lavender'],
+            sizes: foundProduct.sizes || ['XS', 'S', 'M', 'L', 'XL'],
+            backgroundColors: foundProduct.backgroundColors || ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
+            hasRealImages: foundProduct.hasRealImages || foundProduct.id === 1, // Only product 1 has real images in the current setup
+            imagePath: foundProduct.imagePath, // Store the main image path from product listing
+            imageViews: foundProduct.imageViews || {
+              front: foundProduct.id === 1 ? "/images/Мінісукня.png" : foundProduct.imagePath,
+              back: foundProduct.id === 1 ? "/images/Мінісукня2.png" : null,
+              side: foundProduct.id === 1 ? "/images/Мінісукня3.png" : null,
+              detail: foundProduct.id === 1 ? "/images/Мінісукня4.png" : null
+            }
+          };
+          
+          setProduct(productData);
+          
+          // Set the initial color if the product has a color property
+          if (foundProduct.color) {
+            setSelectedColor(foundProduct.color.toLowerCase());
+          }
+          
+          // Set initial size to the first available size
+          if (foundProduct.sizes && foundProduct.sizes.length > 0) {
+            setSelectedSize(foundProduct.sizes[0]);
+          }
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching product:', err);
+      } finally {
+        setLoading(false);
       }
-      
-      // Set initial size to the first available size
-      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0]);
-      }
+    };
+
+    if (productId) {
+      fetchProduct();
     }
   }, [productId]);
 
+  if (loading) {
+    return <div className="product-loading">Loading product...</div>;
+  }
+
+  if (error) {
+    return <div className="product-error">Error: {error}</div>;
+  }
+
   if (!product) {
-    return <div className="product-not-found">Loading product...</div>;
+    return <div className="product-not-found">Product not found</div>;
   }
 
   // Generate placeholder image components instead of actual images for products without real images
