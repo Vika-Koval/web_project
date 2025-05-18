@@ -13,6 +13,7 @@ const ProductDetailPage = () => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [viewMode, setViewMode] = useState('front'); // 'front', 'back', 'side', 'top'
   const [product, setProduct] = useState(null);
+  const [isAddedToCart, setIsAddedToCart] = useState(false); // State to track if the item was added to cart
   
   // Get the cart context functions
   const { addToCart } = useCart();
@@ -114,6 +115,14 @@ const ProductDetailPage = () => {
   // Handle adding the product to cart
   const handleAddToCart = () => {
     addToCart(product, 1, selectedSize, selectedColor);
+    
+    // Set the button state to "Added" and change color
+    setIsAddedToCart(true);
+    
+    // Reset the button after 2 seconds
+    setTimeout(() => {
+      setIsAddedToCart(false);
+    }, 700);
   };
 
   return (
@@ -391,17 +400,18 @@ const ProductDetailPage = () => {
               onClick={handleAddToCart}
               className="add-to-cart" 
               style={{
-                backgroundColor: '#000',
+                backgroundColor: isAddedToCart ? '#4CAF50' : '#000', // Green when added, black by default
                 color: '#fff',
                 padding: '12px 40px',
                 border: 'none',
                 marginTop: '20px',
                 cursor: 'pointer',
                 fontWeight: 'bold',
-                width: '100%'
+                width: '100%',
+                transition: 'background-color 0.3s ease'
               }}
             >
-              ADD TO CART
+              {isAddedToCart ? 'ADDED TO CART' : 'ADD TO CART'}
             </button>
           </div>
         </div>

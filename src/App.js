@@ -14,6 +14,8 @@ function App() {
     <CartProvider>
       <Router>
         <div className="app">
+          {/* ShoppingCart component added outside the Routes to always be available */}
+          <ShoppingCart />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/products" element={
@@ -28,12 +30,7 @@ function App() {
                 <ProductDetailPage />
               </>
             } />
-            <Route path="/cart" element={
-              <>
-                <Navbar />
-                <ShoppingCart />
-              </>
-            } />
+            {/* No need for a separate cart route anymore */}
           </Routes>
         </div>
       </Router>

@@ -1,4 +1,3 @@
-// CartContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Create the cart context
@@ -37,7 +36,7 @@ export const CartProvider = ({ children }) => {
         item.selectedSize === selectedSize && 
         item.selectedColor === selectedColor
       );
-      
+  
       if (existingItemIndex >= 0) {
         // If it exists, update the quantity
         const updatedCart = [...prevCart];
@@ -54,9 +53,9 @@ export const CartProvider = ({ children }) => {
         }];
       }
     });
-    
-    // Open the cart after adding item
-    setIsCartOpen(true);
+  
+    // Removed the line that automatically opens the cart
+    // setIsCartOpen(true);
   };
   
   // Remove a product from cart
