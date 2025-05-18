@@ -1,9 +1,7 @@
-// ProductListingPage.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductListingPage.css';
-import productsData from './product.json';
 
 const ProductListingPage = () => {
   const [products, setProducts] = useState([]);
@@ -15,44 +13,67 @@ const ProductListingPage = () => {
   const [showInStockOnly, setShowInStockOnly] = useState(false);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
   const [currentPriceRange, setCurrentPriceRange] = useState({ min: 0, max: 100 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   useEffect(() => {
-    // Modify the jeans product to be out of stock and not new
-    const modifiedProducts = productsData.products.map(product => {
-      if (product.category === 'JEANS') {
-        return { ...product, inStock: false, isNew: false };
+    // Fetch products from JSON server
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://localhost:3001/products');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Modify the jeans product to be out of stock and not new
+        const modifiedProducts = data.map(product => {
+          if (product.category === 'JEANS') {
+            return { ...product, inStock: false, isNew: false };
+          }
+          return product;
+        });
+        
+        setProducts(modifiedProducts);
+        setFilteredProducts(modifiedProducts);
+        
+        // Set max price based on data
+        if (modifiedProducts.length > 0) {
+          const maxPrice = Math.max(...modifiedProducts.map(product => product.price));
+          setPriceRange({ min: 0, max: maxPrice });
+          setCurrentPriceRange({ min: 0, max: maxPrice });
+          
+          // Log product information
+          console.log("=== PRODUCT DATA ANALYSIS ===");
+          console.log(`Total products: ${modifiedProducts.length}`);
+          
+          // Analyze unique gender values
+          const genders = [...new Set(modifiedProducts.map(p => p.gender))];
+          console.log("Unique genders in data:", genders);
+          
+          // Count products by gender
+          const genderCounts = {};
+          modifiedProducts.forEach(p => {
+            const gender = p.gender || 'UNDEFINED';
+            genderCounts[gender] = (genderCounts[gender] || 0) + 1;
+          });
+          console.log("Products count by gender:", genderCounts);
+          
+          // Log first product structure
+          console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
+        }
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
       }
-      return product;
-    });
+    };
     
-    setProducts(modifiedProducts);
-    setFilteredProducts(modifiedProducts);
-    
-    // Set max price based on data
-    if (modifiedProducts.length > 0) {
-      const maxPrice = Math.max(...modifiedProducts.map(product => product.price));
-      setPriceRange({ min: 0, max: maxPrice });
-      setCurrentPriceRange({ min: 0, max: maxPrice });
-      
-      // Log product information
-      console.log("=== PRODUCT DATA ANALYSIS ===");
-      console.log(`Total products: ${modifiedProducts.length}`);
-      
-      // Analyze unique gender values
-      const genders = [...new Set(modifiedProducts.map(p => p.gender))];
-      console.log("Unique genders in data:", genders);
-      
-      // Count products by gender
-      const genderCounts = {};
-      modifiedProducts.forEach(p => {
-        const gender = p.gender || 'UNDEFINED';
-        genderCounts[gender] = (genderCounts[gender] || 0) + 1;
-      });
-      console.log("Products count by gender:", genderCounts);
-      
-      // Log first product structure
-      console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
-    }
+    fetchProducts();
   }, []);
 
   // Apply filters whenever dependencies change
@@ -122,8 +143,8 @@ const ProductListingPage = () => {
       result = result.filter(product => 
         product.name.toLowerCase().includes(query) ||
         product.category.toLowerCase().includes(query) ||
-        product.gender.toLowerCase().includes(query) ||
-        product.tags.some(tag => tag.toLowerCase().includes(query))
+        (product.gender && product.gender.toLowerCase().includes(query)) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
     
@@ -187,203 +208,209 @@ const ProductListingPage = () => {
         
         <h1 className="products-title">PRODUCTS</h1>
 
-        <div className="products-layout">
-          <div className="filters-sidebar">
-            <h3>Filters</h3>
-            
-            <div className="filter-section">
-              <h4>Gender</h4>
-              <div className="gender-buttons">
-                <button 
-                  className={`gender-button ${activeGender === 'ALL' ? 'active' : ''}`}
-                  onClick={() => handleGenderChange('ALL')}
-                >ALL</button>
-                <button 
-                  className={`gender-button ${activeGender === 'MEN' ? 'active' : ''}`}
-                  onClick={() => handleGenderChange('MEN')}
-                >MEN</button>
-                <button 
-                  className={`gender-button ${activeGender === 'WOMEN' ? 'active' : ''}`}
-                  onClick={() => handleGenderChange('WOMEN')}
-                >WOMEN</button>
-                <button 
-                  className={`gender-button ${activeGender === 'KIDS' ? 'active' : ''}`}
-                  onClick={() => handleGenderChange('KIDS')}
-                >KIDS</button>
+        {isLoading ? (
+          <div className="loading">Loading products...</div>
+        ) : error ? (
+          <div className="error">Error: {error}</div>
+        ) : (
+          <div className="products-layout">
+            <div className="filters-sidebar">
+              <h3>Filters</h3>
+              
+              <div className="filter-section">
+                <h4>Gender</h4>
+                <div className="gender-buttons">
+                  <button 
+                    className={`gender-button ${activeGender === 'ALL' ? 'active' : ''}`}
+                    onClick={() => handleGenderChange('ALL')}
+                  >ALL</button>
+                  <button 
+                    className={`gender-button ${activeGender === 'MEN' ? 'active' : ''}`}
+                    onClick={() => handleGenderChange('MEN')}
+                  >MEN</button>
+                  <button 
+                    className={`gender-button ${activeGender === 'WOMEN' ? 'active' : ''}`}
+                    onClick={() => handleGenderChange('WOMEN')}
+                  >WOMEN</button>
+                  <button 
+                    className={`gender-button ${activeGender === 'KIDS' ? 'active' : ''}`}
+                    onClick={() => handleGenderChange('KIDS')}
+                  >KIDS</button>
+                </div>
               </div>
-            </div>
-            
-            <div className="filter-section">
-              <h4>Size</h4>
-              <div className="size-buttons">
-                <button 
-                  className={selectedSizes.includes('XS') ? 'active' : ''}
-                  onClick={() => toggleSize('XS')}
-                >XS</button>
-                <button 
-                  className={selectedSizes.includes('S') ? 'active' : ''}
-                  onClick={() => toggleSize('S')}
-                >S</button>
-                <button 
-                  className={selectedSizes.includes('M') ? 'active' : ''}
-                  onClick={() => toggleSize('M')}
-                >M</button>
-                <button 
-                  className={selectedSizes.includes('L') ? 'active' : ''}
-                  onClick={() => toggleSize('L')}
-                >L</button>
-                <button 
-                  className={selectedSizes.includes('XL') ? 'active' : ''}
-                  onClick={() => toggleSize('XL')}
-                >XL</button>
+              
+              <div className="filter-section">
+                <h4>Size</h4>
+                <div className="size-buttons">
+                  <button 
+                    className={selectedSizes.includes('XS') ? 'active' : ''}
+                    onClick={() => toggleSize('XS')}
+                  >XS</button>
+                  <button 
+                    className={selectedSizes.includes('S') ? 'active' : ''}
+                    onClick={() => toggleSize('S')}
+                  >S</button>
+                  <button 
+                    className={selectedSizes.includes('M') ? 'active' : ''}
+                    onClick={() => toggleSize('M')}
+                  >M</button>
+                  <button 
+                    className={selectedSizes.includes('L') ? 'active' : ''}
+                    onClick={() => toggleSize('L')}
+                  >L</button>
+                  <button 
+                    className={selectedSizes.includes('XL') ? 'active' : ''}
+                    onClick={() => toggleSize('XL')}
+                  >XL</button>
+                </div>
               </div>
-            </div>
-            
-            <div className="filter-section">
-              <h4>Availability</h4>
-              <div className="checkbox-filter">
-                <input 
-                  type="checkbox" 
-                  id="inStock"
-                  checked={showInStockOnly}
-                  onChange={toggleInStockFilter}
-                />
-                <label htmlFor="inStock">In Stock Only</label>
+              
+              <div className="filter-section">
+                <h4>Availability</h4>
+                <div className="checkbox-filter">
+                  <input 
+                    type="checkbox" 
+                    id="inStock"
+                    checked={showInStockOnly}
+                    onChange={toggleInStockFilter}
+                  />
+                  <label htmlFor="inStock">In Stock Only</label>
+                </div>
               </div>
-            </div>
-            
-            <div className="filter-section">
-              <h4>Category</h4>
-              <ul className="category-list">
-                <li 
-                  className={activeCategory === 'ALL' ? 'active' : ''}
-                  onClick={() => handleCategoryChange('ALL')}
-                >
-                  ALL
-                </li>
-                <li 
-                  className={activeCategory === 'NEW' ? 'active' : ''}
-                  onClick={() => handleCategoryChange('NEW')}
-                >
-                  NEW
-                </li>
-                {['DRESSES', 'SHIRTS', 'JEANS', 'JACKETS'].map(category => (
+              
+              <div className="filter-section">
+                <h4>Category</h4>
+                <ul className="category-list">
                   <li 
-                    key={category} 
-                    className={activeCategory === category ? 'active' : ''}
-                    onClick={() => handleCategoryChange(category)}
+                    className={activeCategory === 'ALL' ? 'active' : ''}
+                    onClick={() => handleCategoryChange('ALL')}
                   >
-                    {category}
+                    ALL
                   </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="filter-section">
-              <h4>Price Range</h4>
-              <div className="price-range">
-                <input 
-                  type="range" 
-                  min={priceRange.min} 
-                  max={priceRange.max} 
-                  value={currentPriceRange.max}
-                  onChange={handlePriceSliderChange}
-                  className="price-slider" 
-                />
-                <div className="price-inputs">
+                  <li 
+                    className={activeCategory === 'NEW' ? 'active' : ''}
+                    onClick={() => handleCategoryChange('NEW')}
+                  >
+                    NEW
+                  </li>
+                  {['DRESSES', 'SHIRTS', 'JEANS', 'JACKETS', 'OUTFITS', 'SUITS'].map(category => (
+                    <li 
+                      key={category} 
+                      className={activeCategory === category ? 'active' : ''}
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {category}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="filter-section">
+                <h4>Price Range</h4>
+                <div className="price-range">
                   <input 
-                    type="number" 
-                    placeholder="Min" 
-                    value={currentPriceRange.min}
-                    onChange={handleMinPriceChange}
-                    min={priceRange.min}
-                    max={currentPriceRange.max}
-                  />
-                  <span>-</span>
-                  <input 
-                    type="number" 
-                    placeholder="Max" 
+                    type="range" 
+                    min={priceRange.min} 
+                    max={priceRange.max} 
                     value={currentPriceRange.max}
-                    onChange={handleMaxPriceChange}
-                    min={currentPriceRange.min}
-                    max={priceRange.max}
+                    onChange={handlePriceSliderChange}
+                    className="price-slider" 
                   />
+                  <div className="price-inputs">
+                    <input 
+                      type="number" 
+                      placeholder="Min" 
+                      value={currentPriceRange.min}
+                      onChange={handleMinPriceChange}
+                      min={priceRange.min}
+                      max={currentPriceRange.max}
+                    />
+                    <span>-</span>
+                    <input 
+                      type="number" 
+                      placeholder="Max" 
+                      value={currentPriceRange.max}
+                      onChange={handleMaxPriceChange}
+                      min={currentPriceRange.min}
+                      max={priceRange.max}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div className="products-main">
-            <div className="search-section">
-              <div className="search-box">
-                <input 
-                  type="text" 
-                  placeholder="Search" 
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
+            
+            <div className="products-main">
+              <div className="search-section">
+                <div className="search-box">
+                  <input 
+                    type="text" 
+                    placeholder="Search" 
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+              </div>
+              
+              <div className="products-grid">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map(product => (
+                    <Link to={`/product/${product.id}`} key={product.id} className="product-card">
+                      <div className="product-image">
+                        <img 
+                          src={product.imagePath} 
+                          alt={product.name}
+                        />
+                        {!product.inStock && (
+                          <div className="out-of-stock" style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            backgroundColor: '#e53935',
+                            color: 'white',
+                            padding: '5px 10px',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            zIndex: 2
+                          }}>
+                            Out of Stock
+                          </div>
+                        )}
+                        {product.isNew && product.inStock && (
+                          <div className="new-tag" style={{
+                            position: 'absolute',
+                            top: '10px',
+                            left: '10px',
+                            backgroundColor: '#4CAF50',
+                            color: 'white',
+                            padding: '5px 10px',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            zIndex: 2
+                          }}>
+                            New
+                          </div>
+                        )}
+                      </div>
+                      <div className="product-meta">
+                        <div className="product-category">{product.category}</div>
+                        <div className="product-gender">{product.gender}</div>
+                        <div className="product-name">{product.name}</div>
+                        <div className="product-price">${product.price.toFixed(2)}</div>
+                        <div className="product-rating">
+                          {"★".repeat(Math.floor(product.rating))}
+                          {"☆".repeat(5 - Math.floor(product.rating))}
+                          <span>{product.rating.toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="no-products">No products match your filters</div>
+                )}
               </div>
             </div>
-            
-            <div className="products-grid">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map(product => (
-                  <Link to={`/product/${product.id}`} key={product.id} className="product-card">
-                    <div className="product-image">
-                      <img 
-                        src={product.imagePath} 
-                        alt={product.name}
-                      />
-                      {!product.inStock && (
-                        <div className="out-of-stock" style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          backgroundColor: '#e53935',
-                          color: 'white',
-                          padding: '5px 10px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          zIndex: 2
-                        }}>
-                          Out of Stock
-                        </div>
-                      )}
-                      {product.isNew && product.inStock && (
-                        <div className="new-tag" style={{
-                          position: 'absolute',
-                          top: '10px',
-                          left: '10px',
-                          backgroundColor: '#4CAF50',
-                          color: 'white',
-                          padding: '5px 10px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          zIndex: 2
-                        }}>
-                          New
-                        </div>
-                      )}
-                    </div>
-                    <div className="product-meta">
-                      <div className="product-category">{product.category}</div>
-                      <div className="product-gender">{product.gender}</div>
-                      <div className="product-name">{product.name}</div>
-                      <div className="product-price">${product.price.toFixed(2)}</div>
-                      <div className="product-rating">
-                        {"★".repeat(Math.floor(product.rating))}
-                        {"☆".repeat(5 - Math.floor(product.rating))}
-                        <span>{product.rating.toFixed(1)}</span>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="no-products">No products match your filters</div>
-              )}
-            </div>
           </div>
-        </div>
+        )}
       </div>
       <Footer />
     </div>
