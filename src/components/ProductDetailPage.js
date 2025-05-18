@@ -30,7 +30,7 @@ const ProductDetailPage = () => {
         name: foundProduct.name.toUpperCase(),
         price: foundProduct.price,
         description: 'Elegant design and comfortable fit. Perfect for everyday wear and special occasions.',
-        colors: ['beige', 'black', 'mint', 'lavender'],
+        colors: ['beige', 'black', 'mint'],
         sizes: foundProduct.sizes || ['XS', 'S', 'M', 'L', 'XL'],
         backgroundColors: ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
         hasRealImages: foundProduct.id === 1, // Only product 1 has real images in the current setup
