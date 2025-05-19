@@ -24,11 +24,11 @@ const HomePage = () => {
     navigate('/products', { state: { filter: activeFilter } });
   };
 
-    // Navigate to products page with filter
-  const handleCartClick = () => {
+
+const handleCartClick = () => {
       navigate('/cart', { state: { filter: activeFilter } });
     };
-
+    
   // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -131,10 +131,10 @@ const HomePage = () => {
         return {
           newCollectionItems: newCollectionFromJson,
           newThisWeekItems: newThisWeekItems.filter(
-            item => item.category === activeFilter
+            item => item.gender === activeFilter
           ),
           collectionItems: collectionItems.filter(
-            item => item.category === activeFilter
+            item => item.gender === activeFilter
           )
         };
       }
@@ -238,7 +238,7 @@ const HomePage = () => {
             <h2>NEW<br />COLLECTION</h2>
             <p>Summer<br />2025</p>
             <div className="shop-navigation">
-              <button className="shop-btn" onClick={handleCartClick}>
+              <button className="shop-btn" onClick={handleShopClick}>
                 Go To Shop <span>→</span>
               </button>
               <div className="navigation-arrows">
@@ -300,13 +300,7 @@ const HomePage = () => {
               >
                 <div className="week-product-image-container">
                   <img src={item.image} alt={item.name} className="week-product-image" />
-                  <button 
-                    className="week-add-button"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent navigation when clicking the button
-                      // Add to cart logic
-                    }}
-                  >+</button>
+                 
                 </div>
                 <div className="week-product-details">
                   <p className="week-product-category">{item.type}</p>
@@ -339,16 +333,7 @@ const HomePage = () => {
           <div className="title-and-categories">
             <h2>XIV COLLECTIONS 23-24</h2>
           </div>
-          <div className="filter-sort">
-            <div className="filter">
-              <span>Filter(s)</span>
-              ...
-            </div>
-            <div className="sort">
-              <span>Sort by</span>
-              ...
-            </div>
-          </div>
+          
         </div>
 
         <div className="product-grid" style={{ 
