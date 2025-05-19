@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import FeaturedCollection from '../components/FeaturedCollection.js';
 import Footer from '../components/Footer.js';
 import Navbar from '../components/Navbar.js';
 import './HomePage.css';
@@ -25,10 +24,10 @@ const HomePage = () => {
   };
 
 
-const handleCartClick = () => {
-      navigate('/cart', { state: { filter: activeFilter } });
-    };
-    
+//const handleCartClick = () => {
+//      navigate('/cart', { state: { filter: activeFilter } });
+//    };
+//    
   // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
