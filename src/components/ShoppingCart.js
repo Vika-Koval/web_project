@@ -14,9 +14,15 @@ const ShoppingCart = () => {
     closeCart 
   } = useCart();
 
-  const [isCheckout, setIsCheckout] = useState(false); // State to toggle checkout form
-  const [cardDetails, setCardDetails] = useState({ cardNumber: '', expiry: '', cvv: '' });
-  const [purchaseId, setPurchaseId] = useState(null); // State to store purchase ID
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [cardDetails, setCardDetails] = useState({ 
+    cardNumber: '', 
+    expiry: '', 
+    cvv: '',
+    cardName: '',
+    email: ''
+  });
+  const [purchaseId, setPurchaseId] = useState(null);
 
   const formatPrice = (price) => `$${price.toFixed(2)}`;
 
@@ -24,11 +30,41 @@ const ShoppingCart = () => {
     setCardDetails({ ...cardDetails, [e.target.name]: e.target.value });
   };
 
+  // Check if all required fields are filled
+  const isFormValid = () => {
+    return cardDetails.cardNumber.trim() !== '' && 
+           cardDetails.expiry.trim() !== '' && 
+           cardDetails.cvv.trim() !== '' &&
+           cardDetails.cardName.trim() !== '' &&
+           cardDetails.email.trim() !== '';
+  };
+
   const handleBuy = () => {
-    // Generate a random purchase ID
-    const randomPurchaseId = Math.floor(100000 + Math.random() * 900000);
-    setPurchaseId(randomPurchaseId);
-    clearCart(); // Clear the cart after purchase
+    if (isFormValid()) {
+      // Generate order number
+      const orderNumber = 'ORD' + Math.floor(100000 + Math.random() * 900000);
+      setPurchaseId(orderNumber);
+      // Reset form
+      setCardDetails({ 
+        cardNumber: '', 
+        expiry: '', 
+        cvv: '',
+        cardName: '',
+        email: ''
+      });
+    }
+  };
+
+  const handleBackToCart = () => {
+    setIsCheckout(false);
+    setPurchaseId(null);
+  };
+
+  const handleCloseAfterPurchase = () => {
+    clearCart();
+    closeCart();
+    setIsCheckout(false);
+    setPurchaseId(null);
   };
 
   if (!isCartOpen) {
@@ -122,44 +158,103 @@ const ShoppingCart = () => {
               <>
                 {purchaseId ? (
                   <div className="purchase-confirmation">
-                    <h3>Thank you for your purchase!</h3>
-                    <p>Your purchase ID is: <strong>{purchaseId}</strong></p>
-                    <button onClick={closeCart} className="close-cart-btn">
-                      Close
-                    </button>
+                    <h3>Thanks for purchase!</h3>
+                    <p>Your order number: <strong>{purchaseId}</strong></p>
+                    <div className="confirmation-actions">
+                      <button onClick={handleCloseAfterPurchase} className="close-confirmation-btn">
+                        Close
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="checkout-form">
-                    <h3>Enter Payment Details</h3>
-                    <form>
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        placeholder="Card Number"
-                        value={cardDetails.cardNumber}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="expiry"
-                        placeholder="Expiry Date (MM/YY)"
-                        value={cardDetails.expiry}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="cvv"
-                        placeholder="CVV"
-                        value={cardDetails.cvv}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <button type="button" onClick={handleBuy} className="buy-btn">
-                        Buy
+                  <div className="checkout-container">
+                    <div className="checkout-header">
+                      <button onClick={handleBackToCart} className="back-btn">
+                        ← Back to Cart
                       </button>
-                    </form>
+                      <h3>Payment Details</h3>
+                    </div>
+                    
+                    <div className="order-summary">
+                      <div className="order-total">
+                        <span>Order Total:</span>
+                        <span>{formatPrice(getCartTotal())}</span>
+                      </div>
+                    </div>
+
+                    <div className="checkout-form">
+                      <form>
+                        <div className="form-group">
+                          <label>Cardholder Name</label>
+                          <input
+                            type="text"
+                            name="cardName"
+                            placeholder="Full Name on Card"
+                            value={cardDetails.cardName}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Card Number</label>
+                          <input
+                            type="text"
+                            name="cardNumber"
+                            placeholder="1234 5678 9012 3456"
+                            value={cardDetails.cardNumber}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Expiry Date</label>
+                            <input
+                              type="text"
+                              name="expiry"
+                              placeholder="MM/YY"
+                              value={cardDetails.expiry}
+                              onChange={handleInputChange}
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>CVV</label>
+                            <input
+                              type="text"
+                              name="cvv"
+                              placeholder="123"
+                              value={cardDetails.cvv}
+                              onChange={handleInputChange}
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Email</label>
+                          <input
+                            type="email"
+                            name="email"
+                            placeholder="your.email@example.com"
+                            value={cardDetails.email}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+
+                        <button 
+                          type="button" 
+                          onClick={handleBuy} 
+                          className={`buy-btn ${!isFormValid() ? 'disabled' : ''}`}
+                          disabled={!isFormValid()}
+                        >
+                          Complete Purchase
+                        </button>
+                      </form>
+                    </div>
                   </div>
                 )}
               </>
