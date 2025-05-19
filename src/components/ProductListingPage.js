@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
+import { useWishlist } from './WishlistContext';
 import './ProductListingPage.css';
 
 const ProductListingPage = () => {
@@ -15,6 +16,12 @@ const ProductListingPage = () => {
   const [currentPriceRange, setCurrentPriceRange] = useState({ min: 0, max: 100 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Add navigate hook
+  const navigate = useNavigate();
+  
+  // Use wishlist hook
+  const { toggleWishlist, isInWishlist } = useWishlist();
   
   useEffect(() => {
     // Fetch products from JSON server from all sections
@@ -188,6 +195,18 @@ const ProductListingPage = () => {
     
     setFilteredProducts(uniqueProducts);
   }, [allProducts, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery, currentPriceRange]);
+
+  // Function to handle wishlist toggle
+  const handleWishlistToggle = (e, product) => {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event from propagating to parent elements
+    toggleWishlist(product);
+  };
+  
+  // Function to handle product card click
+  const handleProductClick = (e, productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   // Toggle size selection
   const toggleSize = (size) => {
@@ -415,7 +434,11 @@ const ProductListingPage = () => {
               <div className="products-grid">
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map(product => (
-                    <Link to={`/product/${product.id}`} key={product.id} className="product-card">
+                    <div 
+                      key={product.id} 
+                      className="product-card"
+                      onClick={(e) => handleProductClick(e, product.id)}
+                    >
                       <div className="product-image">
                         <img 
                           src={product.imagePath || product.image} 
@@ -425,6 +448,17 @@ const ProductListingPage = () => {
                             e.target.src = '/images/placeholder.png';
                           }}
                         />
+                        {/* Wishlist button */}
+                        <button 
+                          className={`wishlist-button ${isInWishlist(product.id) ? 'active' : ''}`}
+                          onClick={(e) => handleWishlistToggle(e, product)}
+                          title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                        >
+                          <span className="heart-icon">
+                            {isInWishlist(product.id) ? '♥' : '♡'}
+                          </span>
+                        </button>
+                        
                         {!product.inStock && (
                           <div className="out-of-stock" style={{
                             position: 'absolute',
@@ -470,7 +504,7 @@ const ProductListingPage = () => {
                           </div>
                         )}
                       </div>
-                    </Link>
+                    </div>
                   ))
                 ) : (
                   <div className="no-products">No products match your filters</div>
@@ -485,4 +519,4 @@ const ProductListingPage = () => {
   );
 };
 
-export default ProductListingPage
+export default ProductListingPage;

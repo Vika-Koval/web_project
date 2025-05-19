@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext'; // Import useCart hook
+import { useWishlist } from './WishlistContext'; // Import useWishlist hook
 import './Navbar.css';
 
 const Navbar = ({ activeFilter, setActiveFilter, handleCategoryClick }) => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
-  const { toggleCart } = useCart(); // Get toggleCart function from context
+  const { toggleCart, getCartCount } = useCart(); // Get toggleCart function from context
+  const { getWishlistCount } = useWishlist(); // Get wishlist count
 
   const handleLinkClick = (path) => {
     setShowMenu(false); // Close menu when link is clicked
@@ -16,6 +18,10 @@ const Navbar = ({ activeFilter, setActiveFilter, handleCategoryClick }) => {
   const handleCartClick = (e) => {
     e.preventDefault(); // Prevent default navigation
     toggleCart(); // Toggle cart visibility
+  };
+
+  const handleWishlistClick = () => {
+    navigate('/wishlist'); // Redirect to the Wishlist page
   };
 
   const handleUserIconClick = () => {
@@ -34,13 +40,29 @@ const Navbar = ({ activeFilter, setActiveFilter, handleCategoryClick }) => {
         </div>
       </div>
       <div className="navbar-right">
-        <img src="/imgs/favorite.png" alt="Icon 1" className="icon-image1" />
+        <button 
+          onClick={handleWishlistClick} 
+          className="wishlist-link"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, position: 'relative' }}
+        >
+          <img src="/imgs/favorite.png" alt="Wishlist" className="icon-image1" />
+          {getWishlistCount() > 0 && (
+            <span className="wishlist-count-badge">
+              {getWishlistCount()}
+            </span>
+          )}
+        </button>
         <button 
           onClick={handleCartClick} 
           className="cart-link"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, position: 'relative' }}
         >
           <img src="/imgs/cart.png" alt="Cart" className="icon-image2" />
+          {getCartCount() > 0 && (
+            <span className="cart-count-badge">
+              {getCartCount()}
+            </span>
+          )}
         </button>
         <button 
           onClick={handleUserIconClick} 
