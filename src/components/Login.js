@@ -28,11 +28,11 @@ const Login = () => {
   const handleSubmit = (e) => {
   e.preventDefault();
   const fakeUser = {
-    name: 'user', // placeholder since we don’t have a real backend
+    name: 'user', 
     email: formData.email,
   };
-  localStorage.setItem('user', JSON.stringify(fakeUser)); // Save to localStorage
-  navigate('/'); // Redirect to user page
+  localStorage.setItem('user', JSON.stringify(fakeUser)); 
+  navigate('/'); 
 };
 
 

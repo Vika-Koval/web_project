@@ -16,6 +16,7 @@ const ProductListingPage = () => {
   const [currentPriceRange, setCurrentPriceRange] = useState({ min: 0, max: 100 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imagesLoaded, setImagesLoaded] = useState({});
   
   const navigate = useNavigate();
   
@@ -67,26 +68,20 @@ const ProductListingPage = () => {
           setPriceRange({ min: 0, max: maxPrice });
           setCurrentPriceRange({ min: 0, max: maxPrice });
           
-          console.log("=== PRODUCT DATA ANALYSIS ===");
-          console.log(`Total products: ${modifiedProducts.length}`);
-          console.log(`- From products section: ${productsData.length}`);
-          console.log(`- From newThisWeek section: ${newThisWeekData.length}`);
-          console.log(`- From collections section: ${collectionsData.length}`);
+         
 
           const genders = [...new Set(modifiedProducts.map(p => p.gender))];
-          console.log("Unique genders in data:", genders);
+       
           
           const genderCounts = {};
           modifiedProducts.forEach(p => {
             const gender = p.gender || 'UNDEFINED';
             genderCounts[gender] = (genderCounts[gender] || 0) + 1;
           });
-          console.log("Products count by gender:", genderCounts);
+        
           
           const categories = [...new Set(modifiedProducts.map(p => p.category))];
-          console.log("Available categories:", categories);
           
-          console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
         }
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -98,6 +93,31 @@ const ProductListingPage = () => {
     
     fetchAllProducts();
   }, []);
+
+  useEffect(() => {
+    if (filteredProducts.length > 0) {
+      const preloadImages = () => {
+        filteredProducts.slice(0, 10).forEach(product => {
+          const img = new Image();
+          img.src = product.imagePath || product.image;
+          img.onload = () => {
+            setImagesLoaded(prev => ({
+              ...prev,
+              [product.id]: true
+            }));
+          };
+          img.onerror = () => {
+            setImagesLoaded(prev => ({
+              ...prev,
+              [product.id]: true
+            }));
+          };
+        });
+      };
+      
+      preloadImages();
+    }
+  }, [filteredProducts]);
 
   useEffect(() => {
     let result = allProducts;
@@ -114,7 +134,7 @@ const ProductListingPage = () => {
     }
     
     if (activeGender !== 'ALL') {
-      console.log("Filtering by gender:", activeGender);
+      
       
       result = result.filter(product => {
         if (!product.gender) return false;
@@ -137,7 +157,6 @@ const ProductListingPage = () => {
                filterGender.includes(productGender);
       });
       
-      console.log(`Found ${result.length} products after gender filtering`);
     }
     
     if (activeCategory === 'NEW') {
@@ -192,7 +211,7 @@ const ProductListingPage = () => {
   };
   
   const handleGenderChange = (gender) => {
-    console.log("Changed gender to:", gender);
+    
     setActiveGender(gender);
   };
 
@@ -365,11 +384,12 @@ const ProductListingPage = () => {
               <div className="filter-section">
                 <h4>Size</h4>
                 <div className="size-options">
-                  {['XS', 'S', 'M', 'L', 'XL', '2XL'].map(size => (
+                  {['XS', 'S', 'M', 'L', 'XL'].map(size => (
                     <button
                       key={size}
                       className={`size-button ${selectedSizes.includes(size) ? 'active' : ''}`}
                       onClick={() => toggleSize(size)}
+                      style={{backgroundColor: selectedSizes.includes(size) ? '#1e88e5' : ''}}
                     >
                       {size}
                     </button>
@@ -395,79 +415,115 @@ const ProductListingPage = () => {
               
               <div className="products-grid">
                 {filteredProducts.length > 0 ? (
-                  filteredProducts.map(product => (
-                    <div 
-                      key={product.id} 
-                      className="product-card"
-                      onClick={(e) => handleProductClick(e, product.id)}
-                    >
-                      <div className="product-image">
-                        <img 
-                          src={product.imagePath || product.image} 
-                          alt={product.name}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '/images/placeholder.png';
-                          }}
-                        />
-                        {/* Wishlist button */}
-                        <button 
-                          className={`wishlist-button ${isInWishlist(product.id) ? 'active' : ''}`}
-                          onClick={(e) => handleWishlistToggle(e, product)}
-                          title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
-                        >
-                          <span className="heart-icon">
-                            {isInWishlist(product.id) ? '♥' : '♡'}
-                          </span>
-                        </button>
-                        
-                        {!product.inStock && (
-                          <div className="out-of-stock" style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            backgroundColor: '#e53935',
-                            color: 'white',
-                            padding: '5px 10px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            zIndex: 2
-                          }}>
-                            Out of Stock
-                          </div>
-                        )}
-                        {product.isNew && product.inStock && (
-                          <div className="new-tag" style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '10px',
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
-                            padding: '5px 10px',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            zIndex: 2
-                          }}>
-                            New
-                          </div>
-                        )}
+                  filteredProducts.map(product => {
+                    // Preload LCP image for the first visible products
+                    const isFirstProduct = filteredProducts.indexOf(product) < 3;
+                    const imgSrc = product.imagePath || product.image;
+                    
+                    if (isFirstProduct && typeof document !== 'undefined') {
+                      const link = document.createElement('link');
+                      link.rel = 'preload';
+                      link.as = 'image';
+                      link.href = imgSrc;
+                      document.head.appendChild(link);
+                    }
+                    
+                    return (
+                      <div 
+                        key={product.id} 
+                        className="product-card"
+                        onClick={(e) => handleProductClick(e, product.id)}
+                      >
+                        <div className="product-image" style={{
+                          aspectRatio: '3/4',
+                          backgroundColor: '#f5f5f5',
+                          position: 'relative',
+                          overflow: 'hidden'
+                        }}>
+                          <img 
+                            src={imgSrc} 
+                            alt={product.name}
+                            loading={isFirstProduct ? "eager" : "lazy"}
+                            style={{
+                              opacity: imagesLoaded[product.id] ? 1 : 0,
+                              transition: 'opacity 0.3s',
+                              objectFit: 'cover',
+                              width: '100%',
+                              height: '100%'
+                            }}
+                            onLoad={() => {
+                              setImagesLoaded(prev => ({
+                                ...prev,
+                                [product.id]: true
+                              }));
+                            }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/images/placeholder.png';
+                              setImagesLoaded(prev => ({
+                                ...prev,
+                                [product.id]: true
+                              }));
+                            }}
+                          />
+                          <button 
+                            className={`wishlist-button ${isInWishlist(product.id) ? 'active' : ''}`}
+                            onClick={(e) => handleWishlistToggle(e, product)}
+                            title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                          >
+                            <span className="heart-icon">
+                              {isInWishlist(product.id) ? '♥' : '♡'}
+                            </span>
+                          </button>
+                          
+                          {!product.inStock && (
+                            <div className="out-of-stock" style={{
+                              position: 'absolute',
+                              top: '10px',
+                              right: '10px',
+                              backgroundColor: '#e53935',
+                              color: 'white',
+                              padding: '5px 10px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                              zIndex: 2
+                            }}>
+                              Out of Stock
+                            </div>
+                          )}
+                          {product.isNew && product.inStock && (
+                            <div className="new-tag" style={{
+                              position: 'absolute',
+                              top: '10px',
+                              left: '10px',
+                              backgroundColor: '#4CAF50',
+                              color: 'white',
+                              padding: '5px 10px',
+                              fontSize: '12px',
+                              fontWeight: 'bold',
+                              zIndex: 2
+                            }}>
+                              New
+                            </div>
+                          )}
+                        </div>
+                        <div className="product-meta">
+                          <div className="product-category">{product.category}</div>
+                          <div className="product-gender">{product.gender}</div>
+                          {product.type && <div className="product-type">{product.type}</div>}
+                          <div className="product-name">{product.name}</div>
+                          <div className="product-price">${product.price.toFixed(2)}</div>
+                          {product.rating && (
+                            <div className="product-rating">
+                              {"★".repeat(Math.floor(product.rating))}
+                              {"☆".repeat(5 - Math.floor(product.rating))}
+                              <span>{product.rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="product-meta">
-                        <div className="product-category">{product.category}</div>
-                        <div className="product-gender">{product.gender}</div>
-                        {product.type && <div className="product-type">{product.type}</div>}
-                        <div className="product-name">{product.name}</div>
-                        <div className="product-price">${product.price.toFixed(2)}</div>
-                        {product.rating && (
-                          <div className="product-rating">
-                            {"★".repeat(Math.floor(product.rating))}
-                            {"☆".repeat(5 - Math.floor(product.rating))}
-                            <span>{product.rating.toFixed(1)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="no-products">No products match your filters</div>
                 )}

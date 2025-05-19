@@ -4,6 +4,55 @@ import Footer from '../components/Footer.js';
 import Navbar from '../components/Navbar.js';
 import './HomePage.css';
 
+const useImagePreloader = (imageUrls) => {
+  const [imagesPreloaded, setImagesPreloaded] = useState(false);
+
+  useEffect(() => {
+    if (!imageUrls || imageUrls.length === 0) {
+      setImagesPreloaded(true);
+      return;
+    }
+
+    let loadedImagesCount = 0;
+    const totalImages = imageUrls.length;
+
+    const preloadPromises = imageUrls.map(url => {
+      return new Promise((resolve, reject) => {
+        if (!url) {
+          loadedImagesCount++;
+          resolve();
+          return;
+        }
+
+        const img = new Image();
+        img.src = url;
+
+        img.onload = () => {
+          loadedImagesCount++;
+          resolve();
+        };
+
+        img.onerror = () => {
+          console.error(`Failed to preload image: ${url}`);
+          loadedImagesCount++;
+          resolve();
+        };
+      });
+    });
+
+    Promise.all(preloadPromises)
+      .then(() => {
+        setImagesPreloaded(true);
+      })
+      .catch(error => {
+        console.error('Image preloading had some errors:', error);
+        setImagesPreloaded(true);
+      });
+  }, [imageUrls]);
+
+  return imagesPreloaded;
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('ALL');
@@ -13,47 +62,50 @@ const HomePage = () => {
   const [collectionItems, setCollectionItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [allImageUrls, setAllImageUrls] = useState([]);
 
-  // Define the handleCategoryClick function
   const handleCategoryClick = (category) => {
     setActiveFilter(category);
   };
-  // Navigate to products page with filter
+
   const handleShopClick = () => {
     navigate('/products', { state: { filter: activeFilter } });
   };
 
-
-//const handleCartClick = () => {
-//      navigate('/cart', { state: { filter: activeFilter } });
-//    };
-//    
-  // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
 
-  // Fetch all data from our JSON Server
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch products
+
         const productsResponse = await fetch('http://localhost:3001/products');
         const productsData = await productsResponse.json();
         setProducts(productsData);
-        
-        // Fetch newThisWeek items
+
         const newThisWeekResponse = await fetch('http://localhost:3001/newThisWeek');
         const newThisWeekData = await newThisWeekResponse.json();
         setNewThisWeekItems(newThisWeekData);
-        
-        // Fetch collection items
+
         const collectionsResponse = await fetch('http://localhost:3001/collections');
         const collectionsData = await collectionsResponse.json();
         setCollectionItems(collectionsData);
-        
-        setLoading(false);
+
+        const imageUrls = [
+          ...productsData.map(item => item.imagePath),
+          ...newThisWeekData.map(item => item.imagePath),
+          ...collectionsData.map(item => item.imagePath),
+
+          '/images/design1.avif',
+          '/images/design2.avif',
+          '/images/design3.avif',
+          '/images/design5.avif'
+        ].filter(url => url);
+
+        setAllImageUrls(imageUrls);
+
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data. Please try again later.");
@@ -64,52 +116,58 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  // Rest of your code remains unchanged...
-  
+  const imagesPreloaded = useImagePreloader(allImageUrls);
+
+  useEffect(() => {
+    if (imagesPreloaded && allImageUrls.length > 0) {
+      setLoading(false);
+    }
+  }, [imagesPreloaded, allImageUrls]);
+
+
   const getNewCollectionItems = () => {
     if (!products || products.length === 0) {
       return [];
     }
-    
+
     let newItems = products.filter(product => product.isNew === true);
-    
+
     if (activeFilter !== 'ALL') {
       newItems = newItems.filter(item => item.gender === activeFilter);
     }
-    
+
     return newItems;
   };
 
   const getCurrentCollectionItems = () => {
     const items = getNewCollectionItems();
     if (!items || items.length === 0) return [];
-    
+
     const start = collectionIndex;
     const end = Math.min(start + 2, items.length);
-    
+
     if (end - start < 2 && start > 0) {
       return items.slice(0, Math.min(2, items.length));
     }
-    
+
     return items.slice(start, end);
   };
 
   const handleCollectionNavigation = (direction) => {
     const items = getNewCollectionItems();
-    if (!items || items.length <= 2) return; 
-    
+    if (!items || items.length <= 2) return;
+
     if (direction === 'prev') {
-      setCollectionIndex(prevIndex => 
+      setCollectionIndex(prevIndex =>
         prevIndex === 0 ? Math.max(0, items.length - 2) : Math.max(0, prevIndex - 2)
       );
     } else {
-      setCollectionIndex(prevIndex => 
+      setCollectionIndex(prevIndex =>
         prevIndex + 2 >= items.length ? 0 : prevIndex + 2
       );
     }
   };
 
-  // Filter products for display based on active filter
   const [filteredProducts, setFilteredProducts] = useState({
     newCollectionItems: [],
     newThisWeekItems: [],
@@ -119,7 +177,7 @@ const HomePage = () => {
   useEffect(() => {
     const filterProducts = () => {
       const newCollectionFromJson = getNewCollectionItems();
-      
+
       if (activeFilter === 'ALL') {
         return {
           newCollectionItems: newCollectionFromJson,
@@ -151,14 +209,14 @@ const HomePage = () => {
 
   const handleWeekNavigation = (direction) => {
     const items = filteredProducts.newThisWeekItems;
-    if (!items || items.length <= itemsPerPage) return; 
-    
+    if (!items || items.length <= itemsPerPage) return;
+
     if (direction === 'prev') {
-      setWeekItemIndex(prevIndex => 
+      setWeekItemIndex(prevIndex =>
         prevIndex === 0 ? Math.max(0, items.length - itemsPerPage) : Math.max(0, prevIndex - itemsPerPage)
       );
     } else {
-      setWeekItemIndex(prevIndex => 
+      setWeekItemIndex(prevIndex =>
         prevIndex + itemsPerPage >= items.length ? 0 : prevIndex + itemsPerPage
       );
     }
@@ -167,31 +225,29 @@ const HomePage = () => {
   const getCurrentWeekItems = () => {
     const items = filteredProducts.newThisWeekItems;
     if (!items || items.length === 0) return [];
-    
+
     const start = weekItemIndex;
     const end = Math.min(start + itemsPerPage, items.length);
-    
+
     return items.slice(start, end);
   };
 
   const [visibleRows, setVisibleRows] = useState(1);
   const itemsPerRow = 3;
 
-  // Show loading state while fetching data
   if (loading) {
-    return <div className="loading">Loading products...</div>;
+    return <div className="loading">Loading products and preloading images...</div>;
   }
 
-  // Show error message if data fetch failed
   if (error) {
     return <div className="error">{error}</div>;
   }
 
   return (
     <div className="home-page">
-      {/* Include Navbar component */}
-      <Navbar 
-        activeFilter={activeFilter} 
+
+      <Navbar
+        activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
         handleCategoryClick={handleCategoryClick}
       />
@@ -199,29 +255,29 @@ const HomePage = () => {
       <section className="filter">
         <div className="navbar-center">
           <div className="categories">
-            <div 
-              className={`category ${activeFilter === 'ALL' ? 'active' : ''}`} 
+            <div
+              className={`category ${activeFilter === 'ALL' ? 'active' : ''}`}
               onClick={() => handleCategoryClick('ALL')}
               style={{ cursor: 'pointer' }}
             >
               ALL
             </div>
-            <div 
-              className={`category ${activeFilter === 'MEN' ? 'active' : ''}`} 
+            <div
+              className={`category ${activeFilter === 'MEN' ? 'active' : ''}`}
               onClick={() => handleCategoryClick('MEN')}
               style={{ cursor: 'pointer' }}
             >
               MEN
             </div>
-            <div 
-              className={`category ${activeFilter === 'WOMEN' ? 'active' : ''}`} 
+            <div
+              className={`category ${activeFilter === 'WOMEN' ? 'active' : ''}`}
               onClick={() => handleCategoryClick('WOMEN')}
               style={{ cursor: 'pointer' }}
             >
               WOMEN
             </div>
-            <div 
-              className={`category ${activeFilter === 'KIDS' ? 'active' : ''}`} 
+            <div
+              className={`category ${activeFilter === 'KIDS' ? 'active' : ''}`}
               onClick={() => handleCategoryClick('KIDS')}
               style={{ cursor: 'pointer' }}
             >
@@ -241,11 +297,11 @@ const HomePage = () => {
                 Go To Shop <span>→</span>
               </button>
               <div className="navigation-arrows">
-                <button 
+                <button
                   className={`arrow-button ${collectionIndex === 0 ? 'active' : ''}`}
                   onClick={() => handleCollectionNavigation('prev')}
                 >〈</button>
-                <button 
+                <button
                   className="arrow-button"
                   onClick={() => handleCollectionNavigation('next')}
                 >〉</button>
@@ -255,16 +311,16 @@ const HomePage = () => {
           <div className="collection-images">
             <div className="featured-items">
               {getCurrentCollectionItems().map((item) => (
-                <div 
-                  key={item.id} 
-                  className="featured-item" 
+                <div
+                  key={item.id}
+                  className="featured-item"
                   onClick={() => handleProductClick(item.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <img 
-                    src={item.imagePath} 
-                    alt={item.name} 
-                    className="featured-image" 
+                  <img
+                    src={item.imagePath}
+                    alt={item.name}
+                    className="featured-image"
                   />
                 </div>
               ))}
@@ -291,15 +347,15 @@ const HomePage = () => {
         <div className="week-products-grid">
           {filteredProducts.newThisWeekItems.length > 0 ? (
             getCurrentWeekItems().map(item => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className="week-product-item"
                 onClick={() => handleProductClick(item.id)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="week-product-image-container">
                   <img src={item.imagePath} alt={item.name} className="week-product-image" />
-                 
+
                 </div>
                 <div className="week-product-details">
                   <p className="week-product-category">{item.type}</p>
@@ -315,36 +371,36 @@ const HomePage = () => {
 
         {filteredProducts.newThisWeekItems.length > itemsPerPage && (
           <div className="week-pagination">
-            <button 
-              className="week-arrow prev" 
+            <button
+              className="week-arrow prev"
               onClick={() => handleWeekNavigation('prev')}
             >←</button>
-            <button 
-              className="week-arrow next" 
+            <button
+              className="week-arrow next"
               onClick={() => handleWeekNavigation('next')}
             >→</button>
           </div>
         )}
       </section>
-      
+
       <section className="collections">
         <div className="section-header">
           <div className="title-and-categories">
             <h2>XIV COLLECTIONS 23-24</h2>
           </div>
-          
+
         </div>
 
-        <div className="product-grid" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(3, 1fr)', 
-          gap: '20px' 
+        <div className="product-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '20px'
         }}>
           {filteredProducts.collectionItems
             .slice(0, visibleRows * itemsPerRow)
             .map(item => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className="product-card"
                 onClick={() => handleProductClick(item.id)}
                 style={{ cursor: 'pointer' }}
@@ -360,11 +416,11 @@ const HomePage = () => {
             ))
           }
         </div>
-        
+
         {filteredProducts.collectionItems.length > visibleRows * itemsPerRow && (
           <div className="load-more-container" style={{ textAlign: 'center', margin: '20px 0' }}>
-            <button 
-              className="load-more-button" 
+            <button
+              className="load-more-button"
               onClick={() => setVisibleRows(prevRows => prevRows + 1)}
               style={{
                 padding: '10px 20px',
@@ -381,12 +437,12 @@ const HomePage = () => {
           </div>
         )}
       </section>
-      
+
       <section className="about-section">
         <h2 className="about-title">OUR APPROACH TO FASHION DESIGN</h2>
         <p className="about-text">
-          at elegant vogue , we blend creativity with craftsmanship to create fashion that 
-          transcends trends and stands the test of time each design is meticulously crafted, 
+          at elegant vogue , we blend creativity with craftsmanship to create fashion that
+          transcends trends and stands the test of time each design is meticulously crafted,
           ensuring the highest quelity exqulsite finish
         </p>
         <div className="about-images">
@@ -396,7 +452,7 @@ const HomePage = () => {
           <img src="/images/design5.avif" alt="Fashion Design" className="about-image" />
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
