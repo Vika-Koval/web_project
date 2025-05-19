@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import './Register.css';
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
   const [user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false); // State to toggle edit mode
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,8 +21,8 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify(formData));
-    setUser(formData); // update state after register
-    navigate('/'); // redirect to home or stay on /user
+    setUser(formData); // Update state after registration
+    setIsEditing(false); // Exit edit mode
   };
 
   const handleLogout = () => {
@@ -39,6 +41,7 @@ const Register = () => {
               <input name="name" placeholder="Name" onChange={handleChange} required />
               <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
               <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+              <input name="phone" type="tel" placeholder="Phone Number" onChange={handleChange} />
               <button type="submit">Enter</button>
             </form>
             <p className="auth-link">
@@ -49,8 +52,44 @@ const Register = () => {
         ) : (
           <>
             <h2>Welcome, {user.name}!</h2>
-            <p>Email: {user.email}</p>
-            <button onClick={handleLogout}>Log Out</button>
+            {!isEditing ? (
+              <>
+                <p>Email: {user.email}</p>
+                {user.phone && <p>Phone: {user.phone}</p>}
+                <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+                <button onClick={handleLogout}>Log Out</button>
+                <button onClick={() => navigate('/products')}>Go Shop</button>
+              </>
+            ) : (
+              <form onSubmit={handleSubmit} className="auth-form">
+                <input
+                  name="name"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="Phone Number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+                <button type="submit">Save Changes</button>
+                <button type="button" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </button>
+              </form>
+            )}
           </>
         )}
       </div>
