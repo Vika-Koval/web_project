@@ -299,7 +299,7 @@ const handleCartClick = () => {
                 style={{ cursor: 'pointer' }}
               >
                 <div className="week-product-image-container">
-                  <img src={item.image} alt={item.name} className="week-product-image" />
+                  <img src={item.imagePath} alt={item.name} className="week-product-image" />
                  
                 </div>
                 <div className="week-product-details">
@@ -351,7 +351,7 @@ const handleCartClick = () => {
                 style={{ cursor: 'pointer' }}
               >
                 <div className="product-image-wrapper">
-                  <img src={item.image} alt={item.name} style={{ width: '100%', height: 'auto' }} />
+                  <img src={item.imagePath} alt={item.name} style={{ width: '100%', height: 'auto' }} />
                 </div>
                 <div className="product-info">
                   <h3 className="product-name">{item.name}</h3>
