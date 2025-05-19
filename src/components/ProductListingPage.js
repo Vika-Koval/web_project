@@ -4,7 +4,7 @@ import Footer from './Footer';
 import './ProductListingPage.css';
 
 const ProductListingPage = () => {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,27 +17,51 @@ const ProductListingPage = () => {
   const [error, setError] = useState(null);
   
   useEffect(() => {
-    // Fetch products from JSON server
-    const fetchProducts = async () => {
+    // Fetch products from JSON server from all sections
+    const fetchAllProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:3001/products');
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        // Fetch all three sections in parallel
+        const [productsResponse, newThisWeekResponse, collectionsResponse] = await Promise.all([
+          fetch('http://localhost:3001/products'),
+          fetch('http://localhost:3001/newThisWeek'),
+          fetch('http://localhost:3001/collections')
+        ]);
+        
+        // Check if any responses have errors
+        if (!productsResponse.ok) {
+          throw new Error(`HTTP error fetching products! Status: ${productsResponse.status}`);
+        }
+        if (!newThisWeekResponse.ok) {
+          throw new Error(`HTTP error fetching newThisWeek! Status: ${newThisWeekResponse.status}`);
+        }
+        if (!collectionsResponse.ok) {
+          throw new Error(`HTTP error fetching collections! Status: ${collectionsResponse.status}`);
         }
         
-        const data = await response.json();
+        // Parse all responses
+        const productsData = await productsResponse.json();
+        const newThisWeekData = await newThisWeekResponse.json();
+        const collectionsData = await collectionsResponse.json();
         
-        // Modify the jeans product to be out of stock and not new
-        const modifiedProducts = data.map(product => {
+        // Combine all products into a single array
+        const combinedProducts = [
+          ...productsData,
+          ...newThisWeekData,
+          ...collectionsData
+        ];
+        
+        // Modify jeans products to be out of stock and not new
+        const modifiedProducts = combinedProducts.map(product => {
           if (product.category === 'JEANS') {
             return { ...product, inStock: false, isNew: false };
           }
           return product;
         });
         
-        setProducts(modifiedProducts);
+        // Set the combined products
+        setAllProducts(modifiedProducts);
         setFilteredProducts(modifiedProducts);
         
         // Set max price based on data
@@ -49,6 +73,9 @@ const ProductListingPage = () => {
           // Log product information
           console.log("=== PRODUCT DATA ANALYSIS ===");
           console.log(`Total products: ${modifiedProducts.length}`);
+          console.log(`- From products section: ${productsData.length}`);
+          console.log(`- From newThisWeek section: ${newThisWeekData.length}`);
+          console.log(`- From collections section: ${collectionsData.length}`);
           
           // Analyze unique gender values
           const genders = [...new Set(modifiedProducts.map(p => p.gender))];
@@ -62,6 +89,10 @@ const ProductListingPage = () => {
           });
           console.log("Products count by gender:", genderCounts);
           
+          // Get unique categories
+          const categories = [...new Set(modifiedProducts.map(p => p.category))];
+          console.log("Available categories:", categories);
+          
           // Log first product structure
           console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
         }
@@ -73,16 +104,17 @@ const ProductListingPage = () => {
       }
     };
     
-    fetchProducts();
+    fetchAllProducts();
   }, []);
 
   // Apply filters whenever dependencies change
   useEffect(() => {
-    let result = products;
+    let result = allProducts;
     
     // Filter by selected sizes
     if (selectedSizes.length > 0) {
       result = result.filter(product => 
+        product.sizes && Array.isArray(product.sizes) &&
         product.sizes.some(size => selectedSizes.includes(size))
       );
     }
@@ -141,15 +173,21 @@ const ProductListingPage = () => {
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
       result = result.filter(product => 
-        product.name.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query) ||
+        (product.name && product.name.toLowerCase().includes(query)) ||
+        (product.category && product.category.toLowerCase().includes(query)) ||
         (product.gender && product.gender.toLowerCase().includes(query)) ||
-        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query)))
+        (product.type && product.type.toLowerCase().includes(query)) ||
+        (product.tags && Array.isArray(product.tags) && product.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
     
-    setFilteredProducts(result);
-  }, [products, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery, currentPriceRange]);
+    // Remove duplicates based on id
+    const uniqueProducts = Array.from(
+      new Map(result.map(item => [item.id, item])).values()
+    );
+    
+    setFilteredProducts(uniqueProducts);
+  }, [allProducts, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery, currentPriceRange]);
 
   // Toggle size selection
   const toggleSize = (size) => {
@@ -181,9 +219,19 @@ const ProductListingPage = () => {
     setShowInStockOnly(!showInStockOnly);
   };
   
-  // Handle price range slider change
-  const handlePriceSliderChange = (e) => {
-    setCurrentPriceRange({ ...currentPriceRange, max: Number(e.target.value) });
+  // Handle price range slider changes
+  const handlePriceSliderChange = (e, type) => {
+    if (type === 'min') {
+      setCurrentPriceRange(prev => ({ 
+        ...prev, 
+        min: Number(e.target.value) 
+      }));
+    } else {
+      setCurrentPriceRange(prev => ({ 
+        ...prev, 
+        max: Number(e.target.value) 
+      }));
+    }
   };
   
   // Handle min price input change
@@ -194,11 +242,23 @@ const ProductListingPage = () => {
     }
   };
   
+  // Handle max price input change
   const handleMaxPriceChange = (e) => {
     const value = Number(e.target.value);
     if (value >= currentPriceRange.min && value <= priceRange.max) {
       setCurrentPriceRange((prev) => ({ ...prev, max: value }));
     }
+  };
+
+  // Get all unique categories from products
+  const getUniqueCategories = () => {
+    if (!allProducts || allProducts.length === 0) return ['DRESSES', 'SHIRTS', 'JEANS', 'JACKETS', 'OUTFITS', 'SUITS'];
+    
+    const categories = [...new Set(allProducts
+      .filter(product => product.category)
+      .map(product => product.category))];
+    
+    return categories;
   };
 
   return (
@@ -239,47 +299,48 @@ const ProductListingPage = () => {
               </div>
               
               <div className="filter-section">
-  <h4>Price Range</h4>
-  <div className="price-range">
-    <div className="range-slider">
-      <input
-        type="range"
-        min={priceRange.min}
-        max={priceRange.max}
-        value={currentPriceRange.min}
-        onChange={handleMinPriceChange}
-        className="price-slider"
-      />
-      <input
-        type="range"
-        min={priceRange.min}
-        max={priceRange.max}
-        value={currentPriceRange.max}
-        onChange={handleMaxPriceChange}
-        className="price-slider"
-      />
-    </div>
-    <div className="price-inputs">
-      <input
-        type="number"
-        placeholder="Min"
-        value={currentPriceRange.min}
-        onChange={handleMinPriceChange}
-        min={priceRange.min}
-        max={currentPriceRange.max}
-      />
-      <span>-</span>
-      <input
-        type="number"
-        placeholder="Max"
-        value={currentPriceRange.max}
-        onChange={handleMaxPriceChange}
-        min={currentPriceRange.min}
-        max={priceRange.max}
-      />
-    </div>
-  </div>
-</div>
+                <h4>Price Range</h4>
+                <div className="price-range">
+                  <div className="range-slider">
+                    <input
+                      type="range"
+                      min={priceRange.min}
+                      max={priceRange.max}
+                      value={currentPriceRange.min}
+                      onChange={(e) => handlePriceSliderChange(e, 'min')}
+                      className="price-slider"
+                    />
+                    <input
+                      type="range"
+                      min={priceRange.min}
+                      max={priceRange.max}
+                      value={currentPriceRange.max}
+                      onChange={(e) => handlePriceSliderChange(e, 'max')}
+                      className="price-slider"
+                    />
+                  </div>
+                  <div className="price-inputs">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={currentPriceRange.min}
+                      onChange={handleMinPriceChange}
+                      min={priceRange.min}
+                      max={currentPriceRange.max}
+                    />
+                    <span>-</span>
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={currentPriceRange.max}
+                      onChange={handleMaxPriceChange}
+                      min={currentPriceRange.min}
+                      max={priceRange.max}
+                    />
+                  </div>
+                </div>
+              </div>
+              
               <div className="filter-section">
                 <h4>Availability</h4>
                 <div className="checkbox-filter">
@@ -308,7 +369,7 @@ const ProductListingPage = () => {
                   >
                     NEW
                   </li>
-                  {['DRESSES', 'SHIRTS', 'JEANS', 'JACKETS', 'OUTFITS', 'SUITS'].map(category => (
+                  {getUniqueCategories().map(category => (
                     <li 
                       key={category} 
                       className={activeCategory === category ? 'active' : ''}
@@ -321,35 +382,17 @@ const ProductListingPage = () => {
               </div>
               
               <div className="filter-section">
-                <h4>Price Range</h4>
-                <div className="price-range">
-                  <input 
-                    type="range" 
-                    min={priceRange.min} 
-                    max={priceRange.max} 
-                    value={currentPriceRange.max}
-                    onChange={handlePriceSliderChange}
-                    className="price-slider" 
-                  />
-                  <div className="price-inputs">
-                    <input 
-                      type="number" 
-                      placeholder="Min" 
-                      value={currentPriceRange.min}
-                      onChange={handleMinPriceChange}
-                      min={priceRange.min}
-                      max={currentPriceRange.max}
-                    />
-                    <span>-</span>
-                    <input 
-                      type="number" 
-                      placeholder="Max" 
-                      value={currentPriceRange.max}
-                      onChange={handleMaxPriceChange}
-                      min={currentPriceRange.min}
-                      max={priceRange.max}
-                    />
-                  </div>
+                <h4>Size</h4>
+                <div className="size-options">
+                  {['XS', 'S', 'M', 'L', 'XL', '2XL'].map(size => (
+                    <button
+                      key={size}
+                      className={`size-button ${selectedSizes.includes(size) ? 'active' : ''}`}
+                      onClick={() => toggleSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -364,6 +407,9 @@ const ProductListingPage = () => {
                     onChange={handleSearchChange}
                   />
                 </div>
+                <div className="product-count">
+                  {filteredProducts.length} products found
+                </div>
               </div>
               
               <div className="products-grid">
@@ -372,8 +418,12 @@ const ProductListingPage = () => {
                     <Link to={`/product/${product.id}`} key={product.id} className="product-card">
                       <div className="product-image">
                         <img 
-                          src={product.imagePath} 
+                          src={product.imagePath || product.image} 
                           alt={product.name}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/images/placeholder.png';
+                          }}
                         />
                         {!product.inStock && (
                           <div className="out-of-stock" style={{
@@ -409,13 +459,16 @@ const ProductListingPage = () => {
                       <div className="product-meta">
                         <div className="product-category">{product.category}</div>
                         <div className="product-gender">{product.gender}</div>
+                        {product.type && <div className="product-type">{product.type}</div>}
                         <div className="product-name">{product.name}</div>
                         <div className="product-price">${product.price.toFixed(2)}</div>
-                        <div className="product-rating">
-                          {"★".repeat(Math.floor(product.rating))}
-                          {"☆".repeat(5 - Math.floor(product.rating))}
-                          <span>{product.rating.toFixed(1)}</span>
-                        </div>
+                        {product.rating && (
+                          <div className="product-rating">
+                            {"★".repeat(Math.floor(product.rating))}
+                            {"☆".repeat(5 - Math.floor(product.rating))}
+                            <span>{product.rating.toFixed(1)}</span>
+                          </div>
+                        )}
                       </div>
                     </Link>
                   ))
@@ -432,4 +485,4 @@ const ProductListingPage = () => {
   );
 };
 
-export default ProductListingPage;
+export default ProductListingPage
