@@ -1,5 +1,4 @@
 
-// components/ProductGrid.js
 import React from 'react';
 import './ProductGrid.css';
 

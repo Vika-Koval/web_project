@@ -6,7 +6,7 @@ import './Register.css';
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
   const [user, setUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // State to toggle edit mode
+  const [isEditing, setIsEditing] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,8 +21,8 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify(formData));
-    setUser(formData); // Update state after registration
-    setIsEditing(false); // Exit edit mode
+    setUser(formData);
+    setIsEditing(false); 
   };
 
   const handleLogout = () => {

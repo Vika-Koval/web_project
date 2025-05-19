@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from './WishlistContext';
 import { useCart } from './CartContext';
-import Navbar from './Navbar'; // Додано імпорт Navbar
+import Navbar from './Navbar'; 
 import Footer from './Footer';
 import './WishlistPage.css';
 

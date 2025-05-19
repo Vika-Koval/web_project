@@ -1,4 +1,3 @@
-/* pages/ProductListingPage.css */
 .products-page {
   padding: 20px;
   max-width: 1200px;
@@ -87,7 +86,6 @@
   font-weight: 500;
 }
 
-/* Size buttons styling */
 .size-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -117,7 +115,6 @@
   border-color: #0052a3;
 }
 
-/* Category styling */
 .category-list {
   list-style: none;
   padding: 0;
@@ -326,7 +323,6 @@
   margin-left: 5px;
 }
 
-/* Price range slider */
 .price-range {
   margin-top: 10px;
 }
@@ -348,7 +344,6 @@
   border: 1px solid #ddd;
 }
 
-/* No products message */
 .no-products {
   grid-column: 1 / -1;
   text-align: center;
@@ -357,7 +352,6 @@
   font-size: 16px;
 }
 
-/* Active filter indicators */
 .filter-active-indicator {
   margin-left: 10px;
   color: #4CAF50;
@@ -411,10 +405,9 @@
   line-height: 1;
 }
 
-/* Position the "Out of Stock" tag and "New" tag to not overlap with wishlist button */
 .out-of-stock {
   top: 10px;
-  right: 56px !important; /* Move it to the left of the wishlist button */
+  right: 56px !important; 
 }
 
 .new-tag {
@@ -422,7 +415,6 @@
   left: 10px;
 }
 
-/* Add heart animation on click */
 @keyframes heartBeat {
   0% { transform: scale(1); }
   14% { transform: scale(1.3); }
@@ -435,7 +427,6 @@
   animation: heartBeat 0.8s ease-in-out;
 }
 
-/* Wishlist counter badge for navbar */
 .wishlist-counter {
   position: absolute;
   top: -5px;

@@ -18,7 +18,6 @@ function App() {
       <WishlistProvider>
         <Router>
           <div className="app">
-            {/* ShoppingCart component added outside the Routes to always be available */}
             <ShoppingCart />
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -51,7 +50,6 @@ function App() {
                   <Login />
                 </>
               } />
-              {/* No need for a separate cart route anymore */}
             </Routes>
           </div>
         </Router>

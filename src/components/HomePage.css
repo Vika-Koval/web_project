@@ -1,4 +1,3 @@
-/* HomePage.css */
 .home-page section {
   margin: 40px 0;
 }
@@ -14,31 +13,31 @@
 }
 
 .collection-images {
-  flex: 1; /* Зменшуємо пропорцію контейнера */
-  max-width: 600px; /* Встановлюємо максимальну ширину */
-  position: relative; /* Ensure positioning context for z-index */
-  z-index: 1; /* Set base z-index */
+  flex: 1; 
+  max-width: 600px;
+  position: relative; 
+  z-index: 1; 
 }
 
 .collection-images img {
-  width: 100%; /* Зображення займає всю ширину контейнера */
-  height: 368px; /* Зберігаємо пропорції зображення */
-  object-fit: cover; /* Забезпечує гарне обрізання зображення */
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
-  border-radius: 8px; /* Закруглені кути */
-  border: 1px solid #ddd; /* Легка сіра рамка */
-  background-color: white; /* Білий фон для зображень */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
-  position: relative; /* Ensure proper stacking */
-  z-index: 2; /* Higher than container to stay visible */
+  width: 100%; 
+  height: 368px; 
+  object-fit: cover;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); 
+  border-radius: 8px; 
+  border: 1px solid #ddd; 
+  background-color: white; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  position: relative; 
+  z-index: 2;
 }
 
 .collection-images img:hover {
-  transform: scale(1.05); /* Slightly enlarge the image */
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); /* Even shadow all around the image */
-  z-index: 3; /* Even higher z-index on hover to ensure visibility */
-  opacity: 1; /* Ensure full opacity */
-  visibility: visible; /* Explicitly set visibility */
+  transform: scale(1.05); 
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); 
+  z-index: 3; 
+  opacity: 1; 
+  visibility: visible; 
 }
 .search-container {
   position: relative;
@@ -70,12 +69,12 @@
 }
 
 .title-container h2 {
-  font-size: 48px; /* Збільшуємо розмір шрифту */
+  font-size: 48px; 
   font-weight: bold;
   text-transform: uppercase;
-  line-height: 1.2; /* Збільшуємо міжрядковий інтервал для кращого вигляду */
-  letter-spacing: 2px; /* Додаємо більше простору між літерами */
-  margin-bottom: 10px; /* Збільшуємо відступ знизу */
+  line-height: 1.2; 
+  letter-spacing: 2px;
+  margin-bottom: 10px; 
 }
 
 .title-container p {
@@ -127,11 +126,6 @@
   justify-content: center;
 }
 
-/* .arrow-button.active {
-  background-color: #3498db;
-  color: white;
-  border-color: #3498db;
-} */
 
 .item-count {
   color: #666;
@@ -154,7 +148,7 @@
 .product-grid {
   display: flex;
   justify-content: space-between;
-  gap: 2rem; /* or margin if needed */
+  gap: 2rem; 
   padding: 2rem 0;
 }
 
@@ -165,7 +159,6 @@
 
 .product-card img {
   width: 100%;
-  /* max-width: 300px; */
   height: auto;
   object-fit: cover;
 }
@@ -179,7 +172,6 @@
 
 .product-card {
   flex: 1;
-  /* max-width: 350px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -187,9 +179,9 @@
 
 .product-image-wrapper {
   width: 100%;
-  height: 420px; /* adjust as needed */
+  height: 420px; 
   overflow: hidden;
-  position: relative; /* For proper stacking */
+  position: relative; 
 }
 
 .product-image-wrapper img {
@@ -265,7 +257,7 @@
   font-size: 18px;
   font-weight: normal;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 5; /* Ensure button stays above the image */
+  z-index: 5; 
 }
 
 .week-product-details {
@@ -388,7 +380,7 @@ section:not(.new-collection) .section-header h2 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  position: relative; /* For proper stacking */
+  position: relative; 
 }
 
 .about-image {
@@ -398,16 +390,15 @@ section:not(.new-collection) .section-header h2 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 8px;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
-  position: relative; /* For proper stacking */
+  position: relative; 
   z-index: 1;
 }
 
-/* Hover effect for about-section images */
 .about-image:hover {
   transform: scale(1.05);
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  z-index: 2; /* Higher z-index on hover */
+  z-index: 2; 
   opacity: 1;
   visibility: visible;
 }
@@ -450,7 +441,6 @@ section:not(.new-collection) .section-header h2 {
   margin-top: 40px;
 }
 
-/* Modify hover effect for the staggered images to maintain their vertical offset */
 .about-image:nth-child(2):hover,
 .about-image:nth-child(4):hover {
   transform: translateY(30px) scale(1.05);
@@ -459,16 +449,14 @@ section:not(.new-collection) .section-header h2 {
   visibility: visible;
 }
 
-/* Fix for Firefox and other browsers */
+
 .collection-images, 
 .about-images,
 .week-product-image-container {
-  backface-visibility: hidden; /* Helps with rendering issues */
+  backface-visibility: hidden; 
   -webkit-backface-visibility: hidden;
   -webkit-transform-style: preserve-3d;
 }
-
-
 
 
 .scroll-container {
@@ -481,10 +469,10 @@ section:not(.new-collection) .section-header h2 {
 
 
 .collection-images {
-  flex: 1; /* Зменшуємо пропорцію контейнера */
-  max-width: 600px; /* Встановлюємо максимальну ширину */
-  position: relative; /* Ensure positioning context for z-index */
-  z-index: 1; /* Set base z-index */
+  flex: 1; 
+  max-width: 600px; 
+  position: relative; 
+  z-index: 1; 
 }
 
 .featured-items {
@@ -495,50 +483,47 @@ section:not(.new-collection) .section-header h2 {
 }
 
 .featured-item {
-  /* width: 48%; Adjust based on original size */
   margin-right: 2%;
 
-  width: 100%; /* Зображення займає всю ширину контейнера */
+  width: 100%; 
   height: 40vh;
-  object-fit: cover; /* Забезпечує гарне обрізання зображення */
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
-  border-radius: 8px; /* Закруглені кути */
-  border: 1px solid #ddd; /* Легка сіра рамка */
-  background-color: white; /* Білий фон для зображень */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
-  position: relative; /* Ensure proper stacking */
-  z-index: 2; /* Higher than container to stay visible */
+  object-fit: cover; 
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); 
+  border-radius: 8px; 
+  border: 1px solid #ddd; 
+  background-color: white; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  position: relative;
+  z-index: 2; 
 }
 
 
-
-
 .collection-images {
-  flex: 1; /* Зменшуємо пропорцію контейнера */
-  max-width: 600px; /* Встановлюємо максимальну ширину */
-  position: relative; /* Ensure positioning context for z-index */
-  z-index: 1; /* Set base z-index */
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  z-index: 1; 
 }
 
 .collection-images img {
   width: 100%; 
   height: 100%;
-  object-fit: cover; /* Забезпечує гарне обрізання зображення */
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); /* Рівномірна тінь по всій фотці */
-  border-radius: 8px; /* Закруглені кути */
-  border: 1px solid #ddd; /* Легка сіра рамка */
-  background-color: white; /* Білий фон для зображень */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effects */
-  position: relative; /* Ensure proper stacking */
-  z-index: 2; /* Higher than container to stay visible */
+  object-fit: cover; 
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2); 
+  border-radius: 8px; 
+  border: 1px solid #ddd; 
+  background-color: white; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  position: relative; 
+  z-index: 2; 
 }
 
 .collection-images img:hover {
-  transform: scale(1.05); /* Slightly enlarge the image */
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); /* Even shadow all around the image */
-  z-index: 3; /* Even higher z-index on hover to ensure visibility */
-  opacity: 1; /* Ensure full opacity */
-  visibility: visible; /* Explicitly set visibility */
+  transform: scale(1.05); 
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3); 
+  z-index: 3; 
+  opacity: 1;
+  visibility: visible; 
 }
 
 @media (max-width: 768px) {
@@ -547,7 +532,6 @@ section:not(.new-collection) .section-header h2 {
   }
 }
 
-/* Категорії */
 .categories {
   display: flex;
   flex-direction: row;

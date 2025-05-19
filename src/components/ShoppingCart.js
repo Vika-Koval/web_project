@@ -30,7 +30,6 @@ const ShoppingCart = () => {
     setCardDetails({ ...cardDetails, [e.target.name]: e.target.value });
   };
 
-  // Check if all required fields are filled
   const isFormValid = () => {
     return cardDetails.cardNumber.trim() !== '' && 
            cardDetails.expiry.trim() !== '' && 

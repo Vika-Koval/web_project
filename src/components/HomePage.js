@@ -15,11 +15,9 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define the handleCategoryClick function
   const handleCategoryClick = (category) => {
     setActiveFilter(category);
   };
-  // Navigate to products page with filter
   const handleShopClick = () => {
     navigate('/products', { state: { filter: activeFilter } });
   };
@@ -28,28 +26,23 @@ const HomePage = () => {
 const handleCartClick = () => {
       navigate('/cart', { state: { filter: activeFilter } });
     };
-    
-  // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
 
-  // Fetch all data from our JSON Server
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch products
+
         const productsResponse = await fetch('http://localhost:3001/products');
         const productsData = await productsResponse.json();
         setProducts(productsData);
         
-        // Fetch newThisWeek items
         const newThisWeekResponse = await fetch('http://localhost:3001/newThisWeek');
         const newThisWeekData = await newThisWeekResponse.json();
         setNewThisWeekItems(newThisWeekData);
         
-        // Fetch collection items
         const collectionsResponse = await fetch('http://localhost:3001/collections');
         const collectionsData = await collectionsResponse.json();
         setCollectionItems(collectionsData);
@@ -64,8 +57,6 @@ const handleCartClick = () => {
 
     fetchData();
   }, []);
-
-  // Rest of your code remains unchanged...
   
   const getNewCollectionItems = () => {
     if (!products || products.length === 0) {
@@ -110,7 +101,6 @@ const handleCartClick = () => {
     }
   };
 
-  // Filter products for display based on active filter
   const [filteredProducts, setFilteredProducts] = useState({
     newCollectionItems: [],
     newThisWeekItems: [],
@@ -178,19 +168,16 @@ const handleCartClick = () => {
   const [visibleRows, setVisibleRows] = useState(1);
   const itemsPerRow = 3;
 
-  // Show loading state while fetching data
   if (loading) {
     return <div className="loading">Loading products...</div>;
   }
 
-  // Show error message if data fetch failed
   if (error) {
     return <div className="error">{error}</div>;
   }
 
   return (
     <div className="home-page">
-      {/* Include Navbar component */}
       <Navbar 
         activeFilter={activeFilter} 
         setActiveFilter={setActiveFilter}

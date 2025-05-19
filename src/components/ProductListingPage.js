@@ -17,26 +17,21 @@ const ProductListingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Add navigate hook
   const navigate = useNavigate();
   
-  // Use wishlist hook
   const { toggleWishlist, isInWishlist } = useWishlist();
   
   useEffect(() => {
-    // Fetch products from JSON server from all sections
     const fetchAllProducts = async () => {
       try {
         setIsLoading(true);
         
-        // Fetch all three sections in parallel
         const [productsResponse, newThisWeekResponse, collectionsResponse] = await Promise.all([
           fetch('http://localhost:3001/products'),
           fetch('http://localhost:3001/newThisWeek'),
           fetch('http://localhost:3001/collections')
         ]);
         
-        // Check if any responses have errors
         if (!productsResponse.ok) {
           throw new Error(`HTTP error fetching products! Status: ${productsResponse.status}`);
         }
@@ -47,19 +42,16 @@ const ProductListingPage = () => {
           throw new Error(`HTTP error fetching collections! Status: ${collectionsResponse.status}`);
         }
         
-        // Parse all responses
         const productsData = await productsResponse.json();
         const newThisWeekData = await newThisWeekResponse.json();
         const collectionsData = await collectionsResponse.json();
         
-        // Combine all products into a single array
         const combinedProducts = [
           ...productsData,
           ...newThisWeekData,
           ...collectionsData
         ];
         
-        // Modify jeans products to be out of stock and not new
         const modifiedProducts = combinedProducts.map(product => {
           if (product.category === 'JEANS') {
             return { ...product, inStock: false, isNew: false };
@@ -67,28 +59,23 @@ const ProductListingPage = () => {
           return product;
         });
         
-        // Set the combined products
         setAllProducts(modifiedProducts);
         setFilteredProducts(modifiedProducts);
         
-        // Set max price based on data
         if (modifiedProducts.length > 0) {
           const maxPrice = Math.max(...modifiedProducts.map(product => product.price));
           setPriceRange({ min: 0, max: maxPrice });
           setCurrentPriceRange({ min: 0, max: maxPrice });
           
-          // Log product information
           console.log("=== PRODUCT DATA ANALYSIS ===");
           console.log(`Total products: ${modifiedProducts.length}`);
           console.log(`- From products section: ${productsData.length}`);
           console.log(`- From newThisWeek section: ${newThisWeekData.length}`);
           console.log(`- From collections section: ${collectionsData.length}`);
-          
-          // Analyze unique gender values
+
           const genders = [...new Set(modifiedProducts.map(p => p.gender))];
           console.log("Unique genders in data:", genders);
           
-          // Count products by gender
           const genderCounts = {};
           modifiedProducts.forEach(p => {
             const gender = p.gender || 'UNDEFINED';
@@ -96,11 +83,9 @@ const ProductListingPage = () => {
           });
           console.log("Products count by gender:", genderCounts);
           
-          // Get unique categories
           const categories = [...new Set(modifiedProducts.map(p => p.category))];
           console.log("Available categories:", categories);
           
-          // Log first product structure
           console.log("First product:", JSON.stringify(modifiedProducts[0], null, 2));
         }
       } catch (err) {
@@ -114,11 +99,9 @@ const ProductListingPage = () => {
     fetchAllProducts();
   }, []);
 
-  // Apply filters whenever dependencies change
   useEffect(() => {
     let result = allProducts;
     
-    // Filter by selected sizes
     if (selectedSizes.length > 0) {
       result = result.filter(product => 
         product.sizes && Array.isArray(product.sizes) &&
@@ -126,24 +109,19 @@ const ProductListingPage = () => {
       );
     }
     
-    // Filter by in-stock status
     if (showInStockOnly) {
       result = result.filter(product => product.inStock);
     }
     
-    // Filter by gender
     if (activeGender !== 'ALL') {
       console.log("Filtering by gender:", activeGender);
       
-      // Check gender value in each product
       result = result.filter(product => {
-        // Check if gender field exists
         if (!product.gender) return false;
         
         const productGender = String(product.gender).toUpperCase().trim();
         const filterGender = activeGender.toUpperCase().trim();
         
-        // Different checks to find a match
         if (filterGender === 'MEN') {
           return ['MEN', 'MAN', 'MALE', 'M', 'MENS', "MEN'S", 'ЧОЛОВІЧИЙ', 'ЧОЛОВІК', 'Ч'].includes(productGender);
         } 
@@ -154,7 +132,6 @@ const ProductListingPage = () => {
           return ['KIDS', 'KID', 'CHILD', 'CHILDREN', 'ДИТЯЧИЙ', 'ДІТИ'].includes(productGender);
         }
         
-        // If not found in variants above, use simple check
         return productGender === filterGender || 
                productGender.includes(filterGender) || 
                filterGender.includes(productGender);
@@ -163,20 +140,17 @@ const ProductListingPage = () => {
       console.log(`Found ${result.length} products after gender filtering`);
     }
     
-    // Filter by category
     if (activeCategory === 'NEW') {
       result = result.filter(product => product.isNew);
     } else if (activeCategory !== 'ALL') {
       result = result.filter(product => product.category === activeCategory);
     }
     
-    // Filter by price range
     result = result.filter(product => 
       product.price >= currentPriceRange.min && 
       product.price <= currentPriceRange.max
     );
     
-    // Apply search query
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
       result = result.filter(product => 
@@ -188,7 +162,6 @@ const ProductListingPage = () => {
       );
     }
     
-    // Remove duplicates based on id
     const uniqueProducts = Array.from(
       new Map(result.map(item => [item.id, item])).values()
     );
@@ -196,19 +169,16 @@ const ProductListingPage = () => {
     setFilteredProducts(uniqueProducts);
   }, [allProducts, selectedSizes, showInStockOnly, activeCategory, activeGender, searchQuery, currentPriceRange]);
 
-  // Function to handle wishlist toggle
   const handleWishlistToggle = (e, product) => {
-    e.preventDefault(); // Prevent default behavior
-    e.stopPropagation(); // Stop event from propagating to parent elements
+    e.preventDefault(); 
+    e.stopPropagation(); 
     toggleWishlist(product);
   };
   
-  // Function to handle product card click
   const handleProductClick = (e, productId) => {
     navigate(`/product/${productId}`);
   };
 
-  // Toggle size selection
   const toggleSize = (size) => {
     if (selectedSizes.includes(size)) {
       setSelectedSizes(selectedSizes.filter(s => s !== size));
@@ -217,28 +187,23 @@ const ProductListingPage = () => {
     }
   };
 
-  // Handle category change
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
   };
   
-  // Handle gender change
   const handleGenderChange = (gender) => {
     console.log("Changed gender to:", gender);
     setActiveGender(gender);
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Toggle in-stock only filter
   const toggleInStockFilter = () => {
     setShowInStockOnly(!showInStockOnly);
   };
   
-  // Handle price range slider changes
   const handlePriceSliderChange = (e, type) => {
     if (type === 'min') {
       setCurrentPriceRange(prev => ({ 
@@ -253,7 +218,6 @@ const ProductListingPage = () => {
     }
   };
   
-  // Handle min price input change
   const handleMinPriceChange = (e) => {
     const value = Number(e.target.value);
     if (value >= priceRange.min && value <= currentPriceRange.max) {
@@ -261,7 +225,6 @@ const ProductListingPage = () => {
     }
   };
   
-  // Handle max price input change
   const handleMaxPriceChange = (e) => {
     const value = Number(e.target.value);
     if (value >= currentPriceRange.min && value <= priceRange.max) {
@@ -269,7 +232,6 @@ const ProductListingPage = () => {
     }
   };
 
-  // Get all unique categories from products
   const getUniqueCategories = () => {
     if (!allProducts || allProducts.length === 0) return ['DRESSES', 'SHIRTS', 'JEANS', 'JACKETS', 'OUTFITS', 'SUITS'];
     

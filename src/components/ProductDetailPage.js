@@ -3,36 +3,32 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductDetailPage.css';
 
-import { useCart } from './CartContext'; // Import the useCart hook
+import { useCart } from './CartContext'; 
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
   const [selectedColor, setSelectedColor] = useState('black');
   const [selectedSize, setSelectedSize] = useState('M');
   const [mainImageIndex, setMainImageIndex] = useState(0);
-  const [viewMode, setViewMode] = useState('front'); // 'front', 'back', 'side', 'top'
+  const [viewMode, setViewMode] = useState('front'); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isAddedToCart, setIsAddedToCart] = useState(false); // State to track if the item was added to cart
+  const [isAddedToCart, setIsAddedToCart] = useState(false); 
 
-  // Get the cart context functions
   const { addToCart } = useCart();
 
   useEffect(() => {
-    // Fetch product data from all three categories in JSON Server
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        
-        // Fetch all three sections in parallel to find the product
+
         const [productsResponse, newThisWeekResponse, collectionsResponse] = await Promise.all([
           fetch('http://localhost:3001/products'),
           fetch('http://localhost:3001/newThisWeek'),
           fetch('http://localhost:3001/collections')
         ]);
         
-        // Check if any responses have errors
         if (!productsResponse.ok) {
           throw new Error(`HTTP error fetching products! Status: ${productsResponse.status}`);
         }
@@ -43,26 +39,19 @@ const ProductDetailPage = () => {
           throw new Error(`HTTP error fetching collections! Status: ${collectionsResponse.status}`);
         }
         
-        // Parse all responses
         const productsData = await productsResponse.json();
         const newThisWeekData = await newThisWeekResponse.json();
         const collectionsData = await collectionsResponse.json();
         
-        // Combine all products into a single array
         const allProducts = [
           ...productsData,
           ...newThisWeekData,
           ...collectionsData
         ];
         
-        // Find the product with matching ID
         const foundProduct = allProducts.find(p => p.id.toString() === productId.toString());
         
-       
-        
-       // const foundProduct = await response.json();
 
-        // Map the product data to match the structure expected by this component
             if (foundProduct) {
           const productData = {
             id: foundProduct.id,
@@ -72,8 +61,8 @@ const ProductDetailPage = () => {
             colors: foundProduct.colors || ['beige', 'black', 'mint'],
             sizes: foundProduct.sizes || ['XS', 'S', 'M', 'L', 'XL'],
             backgroundColors: foundProduct.backgroundColors || ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
-            hasRealImages: foundProduct.hasRealImages || foundProduct.id === 1, // Only product 1 has real images in the current setup
-            imagePath: foundProduct.imagePath, // Store the main image path from product listing
+            hasRealImages: foundProduct.hasRealImages || foundProduct.id === 1, 
+            imagePath: foundProduct.imagePath,
             imageViews: foundProduct.imageViews || {
               front: foundProduct.id === 1 ? "/images/Мінісукня.png" : foundProduct.imagePath,
               back: foundProduct.id === 1 ? "/images/Мінісукня2.png" : null,
@@ -84,12 +73,10 @@ const ProductDetailPage = () => {
           
           setProduct(productData);
           
-          // Set the initial color if the product has a color property
           if (foundProduct.color) {
             setSelectedColor(foundProduct.color.toLowerCase());
           }
-          
-          // Set initial size to the first available size
+
           if (foundProduct.sizes && foundProduct.sizes.length > 0) {
             setSelectedSize(foundProduct.sizes[0]);
           }
@@ -119,16 +106,13 @@ const ProductDetailPage = () => {
     return <div className="product-not-found">Product not found</div>;
   }
 
-  // Generate placeholder image components instead of actual images for products without real images
   const placeholderImages = product.backgroundColors.map((color, index) => ({
     backgroundColor: color,
     id: index
   }));
 
-  // Function to handle clicking on main product image to change view
   const handleImageClick = () => {
     if (product.hasRealImages) {
-      // Cycle through different views: front -> back -> side -> detail -> front
       setViewMode(current => {
         switch(current) {
           case 'front': return 'back';
@@ -141,7 +125,6 @@ const ProductDetailPage = () => {
     }
   };
 
-  // View labels to show which angle we're currently viewing
   const viewLabels = {
     front: 'Front View',
     back: 'Back View',
@@ -149,41 +132,33 @@ const ProductDetailPage = () => {
     detail: 'Detail View'
   };
   
-  // Function to change color and update image
   const handleColorChange = (color) => {
     setSelectedColor(color);
     
-    // Change the main image index based on selected color
     const colorIndex = product.colors.indexOf(color);
     if (colorIndex >= 0) {
       setMainImageIndex(colorIndex);
     }
   };
   
-  // Get the current background color based on selected color or main image index
   const getCurrentBackgroundColor = () => {
     const colorIndex = product.colors.indexOf(selectedColor);
     if (colorIndex >= 0 && colorIndex < product.backgroundColors.length) {
       return product.backgroundColors[colorIndex];
     }
-    // Fallback to the background color based on main image index
     return product.backgroundColors[mainImageIndex] || '#ffffff';
   };
   
-  // Determine if the current background color is dark
   const isDarkBackground = () => {
     const bgColor = getCurrentBackgroundColor();
     return bgColor === '#303030' || bgColor.toLowerCase() === 'black';
   };
   
-  // Handle adding the product to cart
   const handleAddToCart = () => {
     addToCart(product, 1, selectedSize, selectedColor);
     
-    // Set the button state to "Added" and change color
     setIsAddedToCart(true);
     
-    // Reset the button after 2 seconds
     setTimeout(() => {
       setIsAddedToCart(false);
     }, 700);
@@ -195,7 +170,6 @@ const ProductDetailPage = () => {
         <div className="product-gallery">
           <div className="main-image-container">
             {mainImageIndex > 0 ? (
-              // Show a colored square when a color thumbnail is selected
               <div 
                 className="main-product-image color-display"
                 style={{ backgroundColor: getCurrentBackgroundColor() }}
@@ -224,9 +198,7 @@ const ProductDetailPage = () => {
             )}
           </div>
           
-          {/* Fixed-position thumbnails column on the right side */}
           <div className="thumbnail-images">
-            {/* Product thumbnail image first */}
             <div 
               className={`thumbnail ${mainImageIndex === 0 ? 'active' : ''}`} 
               onClick={() => {
@@ -239,8 +211,7 @@ const ProductDetailPage = () => {
                 alt={`${product.name} thumbnail`}
               />
             </div>
-            
-            {/* Color squares for thumbnail selection */}
+
             {product.colors.slice(0, 3).map((color, index) => {
               const bgColor = color === 'beige' ? '#f0d0c0' :
                             color === 'black' ? '#303030' :
@@ -256,7 +227,6 @@ const ProductDetailPage = () => {
                   className={`thumbnail ${mainImageIndex === index + 1 ? 'active' : ''}`} 
                   onClick={() => {
                     setMainImageIndex(index + 1);
-                    // Also update the selected color to match this view
                     if (index < product.colors.length) {
                       setSelectedColor(product.colors[index]);
                     }

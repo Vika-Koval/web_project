@@ -40,18 +40,18 @@
 .menu-links {
  display: none;
  position: absolute;
- top: 1; /* Вирівнюємо меню по верхньому краю бургер-кнопки */
- left: 100%; /* Розташовуємо меню праворуч від кнопки */
- padding: 0; /* Прибираємо внутрішні відступи */
- background: none; /* Прибираємо фон */
- box-shadow: none; /* Прибираємо тінь */
+ top: 1; 
+ left: 100%; 
+ padding: 0; 
+ background: none; 
+ box-shadow: none; 
  z-index: 100;
- white-space: nowrap; /* Запобігає переносу тексту */
+ white-space: nowrap; 
 }
  
 .menu-links.show {
- display: flex; /* Встановлюємо flex для горизонтального розташування */
- gap: 20px; /* Відступи між елементами меню */
+ display: flex; 
+ gap: 20px; 
 }
 
 .menu-links a {

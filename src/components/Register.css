@@ -1,24 +1,22 @@
 .auth-container button {
 display: inline-block;
-width: 150px; /* Ширина кнопки */
-padding: 10px 20px; /* Відступи */
-margin: 10px 5px; /* Відступи між кнопками */
-font-size: 16px; /* Розмір тексту */
-font-weight: bold; /* Жирний текст */
-color: white; /* Білий текст */
-background-color: black; /* Чорний фон */
-border: none; /* Без рамки */
-border-radius: 5px; /* Закруглені кути */
-cursor: pointer; /* Курсор у вигляді руки */
-transition: background-color 0.3s ease; /* Анімація зміни кольору */
+width: 150px; 
+padding: 10px 20px; 
+margin: 10px 5px; 
+font-size: 16px; 
+font-weight: bold; 
+color: white; 
+background-color: black;
+border: none; 
+border-radius: 5px; 
+cursor: pointer; 
+transition: background-color 0.3s ease; 
 }
 
-/* Зміна кольору при наведенні */
 .auth-container button:hover {
-background-color: #333; /* Темно-сірий фон */
+background-color: #333; 
 }
 
-/* Зміна кольору при натисканні */
 .auth-container button:active {
-background-color: green; /* Зелений фон */
+background-color: green; 
 }

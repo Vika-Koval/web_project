@@ -1,8 +1,7 @@
-// components/FeaturedCollection.js
 import React, { useState, useEffect } from 'react';
 
 const FeaturedCollection = ({ items, onNavigate }) => {
-  const displayItems = items.slice(0, 2); // Display only two items at a time
+  const displayItems = items.slice(0, 2); 
 
   return (
     <div className="featured-items">

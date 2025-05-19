@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from './CartContext'; // Import useCart hook
-import { useWishlist } from './WishlistContext'; // Import useWishlist hook
+import { useCart } from './CartContext'; 
+import { useWishlist } from './WishlistContext'; 
 import './Navbar.css';
 
 const Navbar = ({ activeFilter, setActiveFilter, handleCategoryClick }) => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
-  const { toggleCart, getCartCount } = useCart(); // Get toggleCart function from context
-  const { getWishlistCount } = useWishlist(); // Get wishlist count
+  const { toggleCart, getCartCount } = useCart(); 
+  const { getWishlistCount } = useWishlist();
 
   const handleLinkClick = (path) => {
-    setShowMenu(false); // Close menu when link is clicked
-    navigate(path);     // Programmatically navigate to the path
+    setShowMenu(false); 
+    navigate(path);     
   };
 
   const handleCartClick = (e) => {
-    e.preventDefault(); // Prevent default navigation
-    toggleCart(); // Toggle cart visibility
+    e.preventDefault(); 
+    toggleCart();
   };
 
   const handleWishlistClick = () => {
-    navigate('/wishlist'); // Redirect to the Wishlist page
+    navigate('/wishlist'); 
   };
 
   const handleUserIconClick = () => {
-    navigate('/user'); // Redirect to the Sign In page
+    navigate('/user'); 
   };
 
   return (
