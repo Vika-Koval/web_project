@@ -63,12 +63,7 @@ const ProductDetailPage = () => {
             backgroundColors: foundProduct.backgroundColors || ['#f0d0c0', '#303030', '#c0e0d0', '#e0d0e0', '#f0f0e0'],
             hasRealImages: foundProduct.hasRealImages || foundProduct.id === 1, 
             imagePath: foundProduct.imagePath,
-            imageViews: foundProduct.imageViews || {
-              front: foundProduct.id === 1 ? "/images/Мінісукня.png" : foundProduct.imagePath,
-              back: foundProduct.id === 1 ? "/images/Мінісукня2.png" : null,
-              side: foundProduct.id === 1 ? "/images/Мінісукня3.png" : null,
-              detail: foundProduct.id === 1 ? "/images/Мінісукня4.png" : null
-            }
+            imageViews: foundProduct.imageViews 
           };
           
           setProduct(productData);
