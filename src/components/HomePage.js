@@ -286,7 +286,7 @@ const handleCartClick = () => {
           <span className="item-count" style={{ color: "blue", textTransform: "uppercase" }}>
             ({filteredProducts.newThisWeekItems.length})
           </span>
-          <Link to="/new" className="view-all">See All</Link>
+          <Link to="/products" className="view-all">See All</Link>
         </div>
 
         <div className="week-products-grid">
