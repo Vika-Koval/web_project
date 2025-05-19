@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import './ProductDetailPage.css';
+
 import { useCart } from './CartContext'; // Import the useCart hook
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
-  const location = useLocation();
   const [selectedColor, setSelectedColor] = useState('black');
   const [selectedSize, setSelectedSize] = useState('M');
   const [mainImageIndex, setMainImageIndex] = useState(0);
@@ -15,25 +15,55 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAddedToCart, setIsAddedToCart] = useState(false); // State to track if the item was added to cart
-  
+
   // Get the cart context functions
   const { addToCart } = useCart();
-  
+
   useEffect(() => {
-    // Fetch product data from JSON Server
+    // Fetch product data from all three categories in JSON Server
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3001/products/${productId}`);
         
-        if (!response.ok) {
-          throw new Error('Product not found');
+        // Fetch all three sections in parallel to find the product
+        const [productsResponse, newThisWeekResponse, collectionsResponse] = await Promise.all([
+          fetch('http://localhost:3001/products'),
+          fetch('http://localhost:3001/newThisWeek'),
+          fetch('http://localhost:3001/collections')
+        ]);
+        
+        // Check if any responses have errors
+        if (!productsResponse.ok) {
+          throw new Error(`HTTP error fetching products! Status: ${productsResponse.status}`);
+        }
+        if (!newThisWeekResponse.ok) {
+          throw new Error(`HTTP error fetching newThisWeek! Status: ${newThisWeekResponse.status}`);
+        }
+        if (!collectionsResponse.ok) {
+          throw new Error(`HTTP error fetching collections! Status: ${collectionsResponse.status}`);
         }
         
-        const foundProduct = await response.json();
+        // Parse all responses
+        const productsData = await productsResponse.json();
+        const newThisWeekData = await newThisWeekResponse.json();
+        const collectionsData = await collectionsResponse.json();
+        
+        // Combine all products into a single array
+        const allProducts = [
+          ...productsData,
+          ...newThisWeekData,
+          ...collectionsData
+        ];
+        
+        // Find the product with matching ID
+        const foundProduct = allProducts.find(p => p.id.toString() === productId.toString());
+        
+       
+        
+       // const foundProduct = await response.json();
 
         // Map the product data to match the structure expected by this component
-        if (foundProduct) {
+            if (foundProduct) {
           const productData = {
             id: foundProduct.id,
             name: foundProduct.name.toUpperCase(),
