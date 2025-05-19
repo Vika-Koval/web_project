@@ -30,6 +30,18 @@ function App() {
                 <ProductDetailPage />
               </>
             } />
+
+             <Route path="/user" element={
+              <>
+                <Register />
+              </>
+            } />
+
+              <Route path="/login" element={
+              <>
+                <Login />
+              </>
+            } />
             {/* No need for a separate cart route anymore */}
           </Routes>
         </div>
